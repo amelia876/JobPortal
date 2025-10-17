@@ -1,0 +1,135 @@
+/* General Page Setup */
+.login-page {
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: linear-gradient(145deg, #f3f8ff, #e3edff);
+  font-family: "Poppins", sans-serif;
+}
+
+/* Main Container */
+.login-container {
+  display: flex;
+  flex-wrap: wrap;
+  background: white;
+  border-radius: 20px;
+  box-shadow: 0 10px 25px rgba(0, 100, 255, 0.1);
+  overflow: hidden;
+  max-width: 950px;
+  width: 90%;
+  border: 2px solid #e2ebff;
+}
+
+/* Left Section (Form) */
+.login-left {
+  flex: 1;
+  min-width: 320px;
+  padding: 60px 50px;
+}
+
+.login-title {
+  color: #1e3a8a;
+  font-size: 2.3rem;
+  margin-bottom: 10px;
+}
+
+.login-subtitle {
+  color: #64748b;
+  margin-bottom: 30px;
+  font-size: 0.95rem;
+}
+
+.login-form {
+  display: flex;
+  flex-direction: column;
+}
+
+.login-form label {
+  font-weight: 600;
+  color: #334155;
+  margin-bottom: 5px;
+}
+
+.login-form input {
+  padding: 12px;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  font-size: 0.95rem;
+  outline: none;
+  transition: border-color 0.3s;
+}
+
+.login-form input:focus {
+  border-color: #2563eb;
+}
+
+.login-btn {
+  background-color: #2563eb;
+  color: white;
+  padding: 12px;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.login-btn:hover {
+  background-color: #1d4ed8;
+}
+
+.login-links {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 15px;
+}
+
+.login-links a {
+  color: #2563eb;
+  font-size: 0.9rem;
+  text-decoration: none;
+  transition: 0.3s;
+}
+
+.login-links a:hover {
+  text-decoration: underline;
+}
+
+/* Right Section (Image) */
+.login-right {
+  flex: 1;
+  background: #f0f6ff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-width: 300px;
+  padding: 20px;
+}
+
+.login-image {
+  width: 100%;
+  max-width: 400px;
+  border-radius: 10px;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .login-container {
+    flex-direction: column;
+    border-radius: 12px;
+  }
+
+  .login-left {
+    padding: 40px 30px;
+  }
+
+  .login-right {
+    padding: 30px 0;
+  }
+
+  .login-image {
+    max-width: 300px;
+  }
+}

@@ -1,4 +1,4 @@
-const AdminDashboard = () => {
+const About = () => {
   return (
     <div style={{ textAlign: "center", marginTop: "50px" }}>
       <h1>Admin Dashboard</h1>
@@ -7,7 +7,7 @@ const AdminDashboard = () => {
   );
 };
 
-export default AdminDashboard;
+export default About;
 
 
 

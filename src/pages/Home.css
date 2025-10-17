@@ -266,3 +266,74 @@ body {
     width: 100%;
   }
 }
+
+
+/* NAVBAR STYLING */
+.navbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: #ffffff;
+  padding: 15px 50px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+.logo {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #007bff;
+  cursor: pointer;
+}
+
+.nav-links {
+  list-style: none;
+  display: flex;
+  gap: 25px;
+}
+
+.nav-links li a {
+  text-decoration: none;
+  color: #333;
+  font-weight: 500;
+  transition: color 0.3s;
+}
+
+.nav-links li a:hover {
+  color: #007bff;
+}
+
+.nav-actions {
+  display: flex;
+  gap: 15px;
+}
+
+.login-btn,
+.signup-btn {
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.3s ease;
+}
+
+.login-btn {
+  color: #007bff;
+  border: 1px solid #007bff;
+}
+
+.signup-btn {
+  background-color: #007bff;
+  color: white;
+}
+
+.login-btn:hover {
+  background-color: #007bff;
+  color: white;
+}
+
+.signup-btn:hover {
+  background-color: #0056b3;
+}

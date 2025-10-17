@@ -1,0 +1,154 @@
+.dashboard-container {
+  display: flex;
+  background-color: #f8fafc;
+  min-height: 100vh;
+  font-family: "Inter", sans-serif;
+  color: #1e293b;
+}
+
+.dashboard-main {
+  flex: 1;
+  padding: 2rem;
+  margin-left: 220px;
+}
+
+.dashboard-welcome {
+  font-size: 1.8rem;
+  font-weight: 600;
+}
+
+.dashboard-date {
+  color: #64748b;
+  margin-bottom: 1.5rem;
+}
+
+.dashboard-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.stat-card {
+  background: white;
+  padding: 1.2rem;
+  border-radius: 10px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+  text-align: left;
+}
+
+.stat-card h3 {
+  font-size: 0.95rem;
+  color: #475569;
+}
+
+.stat-number {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #2563eb;
+}
+
+.stat-change {
+  font-size: 0.85rem;
+  color: #64748b;
+}
+
+.stat-change.green {
+  color: #16a34a;
+}
+
+.dashboard-content {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+}
+
+.left-section, .right-section {
+  flex: 1;
+  min-width: 300px;
+}
+
+.recent-activity, .career-progress, .upcoming-events, .notifications {
+  background: white;
+  padding: 1.2rem;
+  border-radius: 10px;
+  margin-bottom: 1.5rem;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
+
+.recent-activity ul, .upcoming-events ul, .notifications ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.recent-activity li, .upcoming-events li, .notifications li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.6rem 0;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.recent-activity li:last-child,
+.upcoming-events li:last-child,
+.notifications li:last-child {
+  border-bottom: none;
+}
+
+.status {
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  color: white;
+}
+
+.status.interview {
+  background-color: #16a34a;
+}
+
+.status.review {
+  background-color: #f59e0b;
+}
+
+.status.applied {
+  background-color: #3b82f6;
+}
+
+.career-progress .progress-bar {
+  margin-bottom: 1rem;
+}
+
+.career-progress label {
+  font-size: 0.9rem;
+  display: block;
+  margin-bottom: 0.4rem;
+}
+
+.bar {
+  background-color: #e2e8f0;
+  height: 8px;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.fill {
+  height: 100%;
+  background-color: #2563eb;
+  border-radius: 10px;
+}
+
+@media (max-width: 768px) {
+  .dashboard-main {
+    margin-left: 0;
+    padding: 1rem;
+  }
+
+  .dashboard-content {
+    flex-direction: column;
+  }
+
+  .dashboard-stats {
+    grid-template-columns: 1fr 1fr;
+  }
+}

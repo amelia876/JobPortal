@@ -1,107 +1,134 @@
+// Signup.jsx
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { doc, setDoc } from "firebase/firestore";
-import { auth, db } from "../firebase/firebase";
+import { auth, db, signInWithGoogle, signInWithGithub } from "../firebase/firebase";
 
 const Signup = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [role, setRole] = useState("job_seeker"); // Default role
-  const [country, setCountry] = useState("");
-  const [phone, setPhone] = useState("");
+  const [role, setRole] = useState("job_seeker");
   const [error, setError] = useState("");
   const navigate = useNavigate();
 
+  // --- Email/Password Signup ---
   const handleSignup = async (e) => {
     e.preventDefault();
     setError("");
 
-    if (!email || !password || !role || !country || !phone) {
-      setError("Please fill in all fields.");
-      return;
-    }
-
     try {
-      const userCredential = await createUserWithEmailAndPassword(
-        auth,
-        email,
-        password
-      );
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       const user = userCredential.user;
 
-      // Store user details in Firestore
       await setDoc(doc(db, "users", user.uid), {
         email: user.email,
         role: role,
-        country: country,
-        phone: phone,
       });
 
-      // Redirect immediately based on role
-      if (role === "job_seeker") {
-        navigate("/jobseeker");
-      } else if (role === "employer") {
-        navigate("/employer");
-      } else if (role === "admin") {
-        navigate("/admin");
-      }
-    } catch (error) {
-      setError(error.message);
-      console.error("Error signing up:", error);
+      if (role === "job_seeker") navigate("/jobseeker");
+      else if (role === "employer") navigate("/employer");
+      else if (role === "admin") navigate("/admin");
+    } catch (err) {
+      setError(err.message);
+      console.error(err);
+    }
+  };
+
+  // --- Social Signup (Google / GitHub) ---
+  const handleSocialSignup = async (provider) => {
+    try {
+      let user;
+      if (provider === "google") user = await signInWithGoogle();
+      else if (provider === "github") user = await signInWithGithub();
+
+      // Store user email (role will be selected later)
+      await setDoc(
+        doc(db, "users", user.uid),
+        { email: user.email },
+        { merge: true }
+      );
+
+      // Redirect to SelectRole page so user can pick role
+      navigate("/selectrole");
+    } catch (err) {
+      console.error("Social signup error:", err.message);
+      alert("Signup failed: " + err.message);
     }
   };
 
   return (
     <div style={{ textAlign: "center", marginTop: "50px" }}>
       <h1>Sign Up</h1>
+
       <form onSubmit={handleSignup}>
-        <div>
-          <input
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            placeholder="Email"
-            required
-          />
-        </div>
-        <div style={{ marginTop: "10px" }}>
-          <input
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            placeholder="Password"
-            required
-          />
-        </div>
-        <div style={{ marginTop: "10px" }}>
-          <input
-            type="text"
-            value={country}
-            onChange={(e) => setCountry(e.target.value)}
-            placeholder="Country"
-            required
-          />
-        </div>
-        <div style={{ marginTop: "10px" }}>
-          <input
-            type="text"
-            value={phone}
-            onChange={(e) => setPhone(e.target.value)}
-            placeholder="Phone Number"
-            required
-          />
-        </div>
-        <div style={{ marginTop: "10px" }}>
-          <select value={role} onChange={(e) => setRole(e.target.value)}>
-            <option value="job_seeker">Job Seeker</option>
-            <option value="employer">Employer</option>
-            <option value="admin">Admin</option>
-          </select>
-        </div>
+        <input
+          type="email"
+          placeholder="Email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          required
+        />
+        <br />
+        <input
+          type="password"
+          placeholder="Password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          required
+          style={{ marginTop: "10px" }}
+        />
+        <br />
+        <select
+          value={role}
+          onChange={(e) => setRole(e.target.value)}
+          style={{ marginTop: "10px" }}
+        >
+          <option value="job_seeker">Job Seeker</option>
+          <option value="employer">Employer</option>
+          <option value="admin">Admin</option>
+        </select>
+        <br />
         {error && <p style={{ color: "red" }}>{error}</p>}
-        <button type="submit" style={{ marginTop: "20px" }}>Sign Up</button>
+        <button
+          type="submit"
+          style={{ marginTop: "20px", padding: "10px 20px" }}
+        >
+          Sign Up
+        </button>
       </form>
+
+      <hr style={{ margin: "30px 0" }} />
+      <h3>Or sign up with</h3>
+
+      <button
+        onClick={() => handleSocialSignup("google")}
+        style={{
+          padding: "10px 20px",
+          backgroundColor: "#4285F4",
+          color: "white",
+          borderRadius: "8px",
+          border: "none",
+          cursor: "pointer",
+          marginBottom: "10px",
+        }}
+      >
+        Google
+      </button>
+      <br />
+      <button
+        onClick={() => handleSocialSignup("github")}
+        style={{
+          padding: "10px 20px",
+          backgroundColor: "#333",
+          color: "white",
+          borderRadius: "8px",
+          border: "none",
+          cursor: "pointer",
+        }}
+      >
+        GitHub
+      </button>
     </div>
   );
 };

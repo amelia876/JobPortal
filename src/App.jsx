@@ -6,6 +6,14 @@ import AdminDashboard from "./pages/AdminDashboard";
 import EmployerDashboard from "./pages/EmployerDashboard";
 import JobSeekerDashboard from "./pages/JobSeekerDashboard";
 import RoleBasedRedirect from "./components/RoleBasedRedirect";
+import Contact from "./pages/Contact";
+import About from "./pages/About";
+import SelectRole from "./pages/SelectRole";
+import PostJobPage from "./pages/PostJobPage";
+
+
+
+
 
 function App() {
   return (
@@ -14,6 +22,10 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/login" element={<Login />} />
+        <Route path="/contact" element={<Contact />} />
+        <Route path="/about" element={<About />} />
+        <Route path="/selectrole" element={<SelectRole />} />
+        <Route path="/postjob" element={<PostJobPage />} />
 
         {/* Role-based dashboards */}
         <Route path="/admin" element={<AdminDashboard />} />

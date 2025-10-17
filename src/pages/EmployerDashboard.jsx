@@ -1,7 +1,32 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
+import { auth, db } from "../firebase/firebase";
+import { doc, getDoc } from "firebase/firestore";
 import "./EmployerDashboard.css";
+import { useNavigate } from "react-router-dom";
+
 
 const EmployerDashboard = () => {
+  const [user, setUser] = useState(null);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      const currentUser = auth.currentUser;
+      if (currentUser) {
+        const userDocRef = doc(db, "users", currentUser.uid);
+        const userDoc = await getDoc(userDocRef);
+        if (userDoc.exists()) {
+          setUser(userDoc.data());
+        } else {
+          // Fallback or error handling
+          console.log("No such user document!");
+        }
+      }
+    };
+
+    fetchUserData();
+  }, []);
+
   return (
     <div className="dashboard-container">
       {/* Sidebar */}
@@ -21,19 +46,20 @@ const EmployerDashboard = () => {
       <main className="main-content">
         {/* Header */}
         <header className="header">
-          <h1>Employer Dashboard</h1>
+          <h1>Welcome, {user?.fullName || "Employer"}</h1>
           <div className="search-bar">
             <input type="text" placeholder="Search..." />
             <div className="user-info">
-              <span>Admin</span>
+              <span>{user?.role || "Employer"}</span>
             </div>
           </div>
         </header>
 
         {/* Top Buttons */}
         <div className="action-buttons">
-          <button className="primary-btn">+ Post a Job</button>
-          <button>View Postings</button>
+        {/*  <button className="primary-btn">+ Post a Job</button> */}
+          <button onClick={() => navigate("/postjob")}>Create Job</button>
+          <button>View Postings</button> 
           <button>Schedule Interviews</button>
           <button>View Reports</button>
         </div>

@@ -4,6 +4,23 @@ import "./Home.css";
 const Home = () => {
   return (
     <div className="home-container">
+      {/* NAVBAR */}
+      <nav className="navbar">
+        <div className="logo">JobLytics</div>
+
+        <ul className="nav-links">
+          <li><a href="/home">Home</a></li>
+          <li><a href="/login">Jobs</a></li>
+          <li><a href="/about">About</a></li>
+          <li><a href="/Contact">Contact</a></li>
+        </ul>
+
+        <div className="nav-actions">
+          <a href="/login" className="login-btn">Login</a>
+          <a href="/signup" className="signup-btn">Sign Up</a>
+        </div>
+      </nav>
+
       {/* HERO SECTION */}
       <section className="hero">
         <div className="hero-content">
@@ -34,10 +51,7 @@ const Home = () => {
         </div>
 
         <div className="hero-image">
-          <img
-            src="https://via.placeholder.com/400x500"
-            alt="Business woman"
-          />
+          <img src="https://via.placeholder.com/400x500" alt="Business woman" />
           <div className="job-stats">
             <p><strong>319</strong> job offers in Business Development</p>
             <p><strong>265</strong> job offers in Marketing & Communication</p>
@@ -56,6 +70,10 @@ const Home = () => {
           <div className="category-card">Finance</div>
           <div className="category-card">Healthcare</div>
           <div className="category-card">Human Resources</div>
+          <div className="category-card">Education</div>
+          <div className="category-card">Design</div>
+          <div className="category-card">Education</div>
+          <div className="category-card">Design</div>
         </div>
       </section>
 
@@ -83,14 +101,19 @@ const Home = () => {
             <h3>Senior Editor</h3>
             <p>Marketing • San Francisco, CA • Full Time</p>
           </div>
+          <div className="job-card">
+            <h3>Senior Editor</h3>
+            <p>Marketing • San Francisco, CA • Full Time</p>
+          </div>
         </div>
+        
 
         <button className="view-all-btn">All Job Offers →</button>
       </section>
 
       {/* DEFAULT SECTION */}
       <div className="default-section">
-        <h1>Welcome to JobPortal 👋</h1>
+        <h1>Welcome to JobLytics 👋</h1>
         <p>
           <a href="/signup">Signup</a> | <a href="/login">Login</a>
         </p>
