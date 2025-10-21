@@ -4,6 +4,28 @@ import "./Contact.css";
 const Contact = () => {
   return (
     <div className="contact-page">
+ {/* NAVBAR */}
+      <nav className="navbar">
+        <div className="logo">JobLytics</div>
+
+        <ul className="nav-links">
+          <li><a href="/Home">Home</a></li>
+          <li><a href="/Login">Jobs</a></li>
+          <li><a href="/AboutUs">About</a></li>
+          <li><a href="/Contact">Contact</a></li>
+        </ul>
+
+        <div className="nav-actions">
+          <a href="/login" className="login-btn">Login</a>
+          <a href="/home" className="signup-btn">Back</a>
+        </div>
+      </nav>
+
+
+
+
+
+
       {/* Header Section */}
       <section className="contact-header">
         <h1>Contact Us</h1>

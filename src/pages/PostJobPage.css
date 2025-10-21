@@ -1,183 +1,530 @@
-/* Layout */
+/* PostJobPage Styles */
 .postjob-page {
-  display: flex;
   min-height: 100vh;
-  font-family: "Inter", sans-serif;
-  background-color: #f7f8fa;
+  background-color: #f8f9fa;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
 }
 
-/* Sidebar */
-.sidebarJobs {
-  width: 70px;
-  background-color: #1f2937;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding-top: 30px;
-  gap: 25px;
-}
-
-.sidebarJobs-icon {
-  width: 24px;
-  height: 24px;
-  background-color: #6b7280;
-  border-radius: 4px;
-  cursor: pointer;
-}
-
-.sidebarJobs-icon.active {
-  background-color: #2563eb;
-}
-
-/* Top Bar */
-.main-content {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-}
-
-.topbar {
+/* NAVBAR */
+.navbar {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 15px 30px;
-  background-color: #fff;
+  padding: 1rem 2rem;
+  background-color: white;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
   border-bottom: 1px solid #e5e7eb;
 }
 
-.logo {
-  font-weight: 600;
-  letter-spacing: 0.5px;
-}
-
-.settings-icon {
-  font-size: 1.3rem;
-  cursor: pointer;
-}
-
-/* Steps */
-.steps {
-  display: flex;
-  justify-content: space-around;
-  background-color: #f3f4f6;
-  padding: 15px 0;
-  font-size: 0.9rem;
-  color: #6b7280;
-  border-bottom: 1px solid #e5e7eb;
-}
-
-.step.active {
+.navbar .logo {
+  font-size: 1.5rem;
+  font-weight: bold;
   color: #2563eb;
-  font-weight: 600;
 }
 
-/* Form Card */
-.form-card {
-  background-color: #fff;
-  margin: 30px auto;
-  padding: 40px 50px;
-  border-radius: 8px;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
-  width: 90%;
-  max-width: 1100px;
+.nav-links {
+  display: flex;
+  list-style: none;
+  gap: 2rem;
+  margin: 0;
+  padding: 0;
 }
 
-.form-card h3 {
-  margin-bottom: 8px;
-  font-size: 1.3rem;
-  color: #111827;
+.nav-links a {
+  text-decoration: none;
+  color: #4b5563;
+  font-weight: 500;
+  transition: color 0.2s;
 }
 
-.description {
-  color: #6b7280;
-  font-size: 0.9rem;
-  line-height: 1.5;
-  margin-bottom: 30px;
+.nav-links a:hover {
+  color: #2563eb;
 }
 
-/* Form Grid */
-.form-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 25px 40px;
+.nav-actions {
+  display: flex;
+  gap: 1rem;
 }
 
-.form-group {
-  position: relative;
+.login-btn {
+  padding: 0.5rem 1rem;
+  text-decoration: none;
+  color: #4b5563;
+  font-weight: 500;
+  transition: color 0.2s;
+}
+
+.login-btn:hover {
+  color: #2563eb;
+}
+
+.signup-btn {
+  padding: 0.5rem 1rem;
+  background-color: #2563eb;
+  color: white;
+  text-decoration: none;
+  border-radius: 0.375rem;
+  font-weight: 500;
+  transition: background-color 0.2s;
+}
+
+.signup-btn:hover {
+  background-color: #1d4ed8;
+}
+
+/* Main Content Wrapper */
+.postjob-content-wrapper {
+  display: flex;
+  min-height: calc(100vh - 80px);
+}
+
+/* Sidebar */
+.postjob-sidebar {
+  width: 280px;
+  background: white;
+  border-right: 1px solid #e5e7eb;
+  padding: 24px;
   display: flex;
   flex-direction: column;
 }
 
-.form-group label {
-  font-weight: 500;
-  margin-bottom: 6px;
-  color: #374151;
-  font-size: 0.95rem;
+.postjob-sidebar-header {
+  margin-bottom: 40px;
 }
 
-.form-group input {
-  padding: 10px 12px;
-  border: 1px solid #d1d5db;
-  border-radius: 6px;
-  font-size: 0.9rem;
-  transition: border-color 0.2s;
+.postjob-logo {
+  font-size: 24px;
+  font-weight: 700;
+  color: #2563eb;
+  margin: 0;
 }
 
-.form-group input:focus {
-  outline: none;
-  border-color: #2563eb;
+.postjob-sidebar-steps {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
 }
 
-/* Dropdown */
-.dropdown {
-  position: absolute;
-  top: 70px;
-  background-color: #fff;
-  border: 1px solid #e5e7eb;
-  border-radius: 6px;
-  width: 100%;
-  z-index: 10;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+.postjob-step-indicator {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  border-radius: 8px;
+  transition: all 0.2s;
 }
 
-.dropdown p {
-  padding: 10px;
-  font-size: 0.85rem;
+.postjob-step-indicator.active {
+  background: #eff6ff;
+  border: 1px solid #dbeafe;
+}
+
+.postjob-step-number {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: #f3f4f6;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  font-weight: 600;
   color: #6b7280;
+  transition: all 0.2s;
+}
+
+.postjob-step-indicator.active .postjob-step-number {
+  background: #2563eb;
+  color: white;
+}
+
+.postjob-step-info {
+  flex: 1;
+}
+
+.postjob-step-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: #1f2937;
+  margin-bottom: 2px;
+}
+
+.postjob-step-desc {
+  font-size: 12px;
+  color: #6b7280;
+}
+
+/* Main Content */
+.postjob-main-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+}
+
+.postjob-topbar {
+  background: white;
+  border-bottom: 1px solid #e5e7eb;
+  padding: 16px 32px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.postjob-breadcrumb {
+  font-size: 14px;
+  color: #6b7280;
+}
+
+.postjob-user-menu {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.postjob-user-avatar {
+  width: 32px;
+  height: 32px;
+  background: #2563eb;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.postjob-user-name {
+  font-size: 14px;
+  font-weight: 500;
+  color: #374151;
+}
+
+/* Progress Bar */
+.postjob-progress-container {
+  background: white;
+  padding: 20px 32px;
   border-bottom: 1px solid #e5e7eb;
 }
 
-.dropdown-item {
-  padding: 10px;
+.postjob-progress-bar {
+  width: 100%;
+  height: 6px;
+  background: #f3f4f6;
+  border-radius: 3px;
+  overflow: hidden;
+  margin-bottom: 8px;
+}
+
+.postjob-progress-fill {
+  height: 100%;
+  background: #2563eb;
+  border-radius: 3px;
+  transition: width 0.3s ease;
+}
+
+.postjob-progress-text {
+  font-size: 14px;
+  color: #6b7280;
+  text-align: center;
+}
+
+/* Form Card */
+.postjob-form-card {
+  flex: 1;
+  background: white;
+  margin: 24px 32px;
+  border-radius: 12px;
+  border: 1px solid #e5e7eb;
+  overflow: hidden;
+}
+
+.postjob-form-header {
+  padding: 32px 32px 0;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.postjob-form-header h2 {
+  font-size: 24px;
+  font-weight: 600;
+  color: #1f2937;
+  margin: 0 0 8px 0;
+}
+
+.postjob-form-header p {
+  font-size: 14px;
+  color: #6b7280;
+  margin: 0 0 24px 0;
+}
+
+.postjob-form-content {
+  padding: 32px;
+  color: #333
+}
+
+/* Form Grid */
+.postjob-form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.postjob-form-grid-full {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.postjob-form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.postjob-form-group label {
+  font-size: 14px;
+  font-weight: 500;
+  color: #374151;
+  margin-bottom: 8px;
+}
+
+.postjob-form-group input,
+.postjob-form-group select,
+.postjob-form-group textarea {
+  padding: 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 14px;
+  transition: all 0.2s;
+  font-family: inherit;
+}
+
+.postjob-form-group input:focus,
+.postjob-form-group select:focus,
+.postjob-form-group textarea:focus {
+  outline: none;
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+.postjob-form-group textarea {
+  resize: vertical;
+  min-height: 80px;
+}
+
+.postjob-hint {
+  font-size: 12px;
+  color: #6b7280;
+  margin-top: 8px;
+}
+
+/* Review Section */
+.postjob-review-container {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.postjob-review-container h3 {
+  font-size: 20px;
+  font-weight: 600;
+  color: #1f2937;
+  margin: 0;
+}
+
+.postjob-review-section {
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.postjob-review-section h4 {
+  background: #f8fafc;
+  padding: 16px 20px;
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: #374151;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.postjob-review-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  padding: 20px;
+}
+
+.postjob-review-item {
+  font-size: 14px;
+}
+
+.postjob-review-item strong {
+  color: #374151;
+}
+
+.postjob-review-content {
+  padding: 20px;
+  font-size: 14px;
+  line-height: 1.6;
+  color: #4b5563;
+  white-space: pre-wrap;
+}
+
+.postjob-questions-list {
+  padding: 20px;
+  margin: 0;
+  list-style: none;
+}
+
+.postjob-questions-list li {
+  padding: 8px 0;
+  border-bottom: 1px solid #f3f4f6;
+  font-size: 14px;
+}
+
+.postjob-questions-list li:last-child {
+  border-bottom: none;
+}
+
+.postjob-review-note {
+  background: #eff6ff;
+  border: 1px solid #dbeafe;
+  border-radius: 8px;
+  padding: 16px;
+  text-align: center;
+  font-size: 14px;
+  color: #1e40af;
+}
+
+/* Navigation Buttons */
+.postjob-form-navigation {
+  background: white;
+  border-top: 1px solid #e5e7eb;
+  padding: 20px 32px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.postjob-primary-btn {
+  background: #2563eb;
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
   cursor: pointer;
-  font-size: 0.9rem;
-  color: #111827;
+  transition: background-color 0.2s;
 }
 
-.dropdown-item:hover {
-  background-color: #f3f4f6;
+.postjob-primary-btn:hover {
+  background: #1d4ed8;
 }
 
-/* Error text */
-.error-text {
-  color: #ef4444;
-  font-size: 0.8rem;
-  margin-top: 4px;
+.postjob-secondary-btn {
+  background: white;
+  color: #374151;
+  border: 1px solid #d1d5db;
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
 }
 
-/* Responsive */
-@media (max-width: 900px) {
-  .form-grid {
-    grid-template-columns: 1fr;
-  }
+.postjob-secondary-btn:hover {
+  background: #f9fafb;
+  border-color: #9ca3af;
+}
 
-  .form-card {
-    padding: 30px 25px;
-  }
-
-  .steps {
+/* Responsive Design */
+@media (max-width: 768px) {
+  .navbar {
+    padding: 1rem;
     flex-direction: column;
-    align-items: center;
-    gap: 5px;
+    gap: 1rem;
+  }
+
+  .nav-links {
+    gap: 1rem;
+  }
+
+  .postjob-content-wrapper {
+    flex-direction: column;
+  }
+  
+  .postjob-sidebar {
+    width: 100%;
+    border-right: none;
+    border-bottom: 1px solid #e5e7eb;
+  }
+  
+  .postjob-sidebar-steps {
+    flex-direction: row;
+    overflow-x: auto;
+    gap: 8px;
+  }
+  
+  .postjob-step-indicator {
+    flex-direction: column;
+    text-align: center;
+    min-width: 120px;
+  }
+  
+  .postjob-step-info {
+    display: none;
+  }
+  
+  .postjob-topbar {
+    padding: 16px 20px;
+  }
+  
+  .postjob-form-card {
+    margin: 16px 20px;
+  }
+  
+  .postjob-form-header,
+  .postjob-form-content {
+    padding: 20px;
+  }
+  
+  .postjob-form-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+  
+  .postjob-review-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+    padding: 16px;
+  }
+  
+  .postjob-form-navigation {
+    padding: 16px 20px;
+  }
+}
+
+@media (max-width: 480px) {
+  .nav-links {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.5rem;
+  }
+  
+  .nav-actions {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  
+  .postjob-form-card {
+    margin: 12px 16px;
+  }
+  
+  .postjob-form-header,
+  .postjob-form-content {
+    padding: 16px;
   }
 }

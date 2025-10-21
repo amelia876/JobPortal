@@ -1,12 +1,18 @@
 import React, { useState, useEffect } from "react";
 import { auth, db } from "../firebase/firebase";
-import { doc, getDoc } from "firebase/firestore";
+import { doc, getDoc, collection, query, where, getDocs } from "firebase/firestore";
 import "./EmployerDashboard.css";
 import { useNavigate } from "react-router-dom";
 
-
 const EmployerDashboard = () => {
   const [user, setUser] = useState(null);
+  const [stats, setStats] = useState({
+    activeJobs: 0,
+    totalCandidates: 0,
+    todaysInterviews: 8,
+    responseRate: 85
+  });
+  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -18,14 +24,58 @@ const EmployerDashboard = () => {
         if (userDoc.exists()) {
           setUser(userDoc.data());
         } else {
-          // Fallback or error handling
           console.log("No such user document!");
         }
       }
     };
 
+    const fetchJobData = async () => {
+      try {
+        const currentUser = auth.currentUser;
+        if (!currentUser) {
+          navigate('/login');
+          return;
+        }
+
+        // Fetch jobs for this employer
+        const jobsQuery = query(
+          collection(db, 'jobs'),
+          where('employerId', '==', currentUser.uid)
+        );
+
+        const querySnapshot = await getDocs(jobsQuery);
+        const jobsData = querySnapshot.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data()
+        }));
+
+        // Calculate stats
+        const activeJobs = jobsData.filter(job => job.status === 'active').length;
+        const totalCandidates = jobsData.reduce((total, job) => total + (job.applicants || 0), 0);
+
+        setStats({
+          activeJobs,
+          totalCandidates,
+          todaysInterviews: 8, // Placeholder
+          responseRate: 85 // Placeholder
+        });
+
+      } catch (error) {
+        console.error('Error fetching job data:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
     fetchUserData();
-  }, []);
+    fetchJobData();
+  }, [navigate]);
+
+  const handleStatClick = (statType) => {
+    if (statType === 'activeJobs' || statType === 'totalCandidates') {
+      navigate("/employer/jobs");
+    }
+  };
 
   return (
     <div className="dashboard-container">
@@ -46,7 +96,7 @@ const EmployerDashboard = () => {
       <main className="main-content">
         {/* Header */}
         <header className="header">
-          <h1>Welcome, {user?.fullName || "Employer"}</h1>
+          <h1>Welcome, {user?.firstName || "Employer"}</h1>
           <div className="search-bar">
             <input type="text" placeholder="Search..." />
             <div className="user-info">
@@ -57,30 +107,37 @@ const EmployerDashboard = () => {
 
         {/* Top Buttons */}
         <div className="action-buttons">
-        {/*  <button className="primary-btn">+ Post a Job</button> */}
           <button onClick={() => navigate("/postjob")}>Create Job</button>
-          <button>View Postings</button> 
-          <button>Schedule Interviews</button>
+          <button onClick={() => navigate("/employer/jobs")}>View Postings</button>
+          <button onClick={() => navigate("/schedule-interview")}>Schedule Interview</button>
           <button>View Reports</button>
         </div>
 
         {/* Stats */}
         <div className="stats-cards">
-          <div className="card">
+          <div 
+            className={`card ${loading ? 'loading' : 'clickable'}`}
+            onClick={() => !loading && handleStatClick('activeJobs')}
+          >
             <h3>Active Jobs</h3>
-            <p>12</p>
+            <p>{loading ? '...' : stats.activeJobs}</p>
+            {!loading && <span className="stat-hint">Click to manage</span>}
           </div>
-          <div className="card">
+          <div 
+            className={`card ${loading ? 'loading' : 'clickable'}`}
+            onClick={() => !loading && handleStatClick('totalCandidates')}
+          >
             <h3>Total Candidates</h3>
-            <p>156</p>
+            <p>{loading ? '...' : stats.totalCandidates}</p>
+            {!loading && <span className="stat-hint">Click to view</span>}
           </div>
           <div className="card">
             <h3>Today's Interviews</h3>
-            <p>8</p>
+            <p>{stats.todaysInterviews}</p>
           </div>
           <div className="card">
             <h3>Response Rate</h3>
-            <p>85%</p>
+            <p>{stats.responseRate}%</p>
           </div>
         </div>
 

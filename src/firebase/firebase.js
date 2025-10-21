@@ -40,6 +40,8 @@ export const signInWithGithub = async () => {
   return result.user;
 };
 
+
+
 //export const signInWithFacebook = async () => {
 //  const result = await signInWithPopup(auth, facebookProvider);
 //  return result.user;
