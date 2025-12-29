@@ -1,7 +1,31 @@
 import React, { useState, useEffect } from 'react';
 import { auth, db } from "../firebase/firebase";
-import { collection, query, where, getDocs, doc, updateDoc, deleteDoc, Timestamp } from 'firebase/firestore';
-import { useNavigate } from 'react-router-dom';
+import { collection, query, where, getDocs, doc, updateDoc, Timestamp } from 'firebase/firestore';
+import { useNavigate, Link } from 'react-router-dom';
+import {
+  FiHome,
+  FiBriefcase,
+  FiUser,
+  FiUsers,
+  FiBell,
+  FiMessageSquare,
+  FiLogOut,
+  FiSearch,
+  FiEdit,
+  FiTrash2,
+  FiEye,
+  FiClock,
+  FiCheckCircle,
+  FiXCircle,
+  FiArchive,
+  FiFileText,
+  FiDollarSign,
+  FiMapPin,
+  FiCalendar,
+  FiChevronRight,
+  FiPlus,
+  FiFilter
+} from 'react-icons/fi';
 import './EmployerJobList.css';
 
 const EmployerJobList = () => {
@@ -11,6 +35,7 @@ const EmployerJobList = () => {
   const [statusFilter, setStatusFilter] = useState('all');
   const [jobs, setJobs] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [notificationsOpen, setNotificationsOpen] = useState(false);
   const navigate = useNavigate();
 
   const [editingJob, setEditingJob] = useState(null);
@@ -28,15 +53,13 @@ const EmployerJobList = () => {
     hiringProcess: ''
   });
 
-  const [showNewJobModal, setShowNewJobModal] = useState(false);
-
   // Applicant status options
   const applicantStatuses = [
-    { value: 'applied', label: 'Applied', color: '#6b7280' },
-    { value: 'reviewed', label: 'Reviewed', color: '#3b82f6' },
-    { value: 'interview', label: 'Interview', color: '#f59e0b' },
-    { value: 'rejected', label: 'Rejected', color: '#ef4444' },
-    { value: 'hired', label: 'Hired', color: '#10b981' }
+    { value: 'applied', label: 'Applied', color: '#6b7280', icon: <FiFileText /> },
+    { value: 'reviewed', label: 'Reviewed', color: '#3b82f6', icon: <FiEye /> },
+    { value: 'interview', label: 'Interview', color: '#f59e0b', icon: <FiClock /> },
+    { value: 'rejected', label: 'Rejected', color: '#ef4444', icon: <FiXCircle /> },
+    { value: 'hired', label: 'Hired', color: '#10b981', icon: <FiCheckCircle /> }
   ];
 
   // Fetch jobs from Firebase
@@ -141,14 +164,13 @@ const EmployerJobList = () => {
   };
 
   const handleDelete = async (jobId) => {
-    if (!window.confirm('Are you sure you want to delete this job posting? This will remove it from the site but keep it in the database.')) {
+    if (!window.confirm('Are you sure you want to archive this job posting?')) {
       return;
     }
 
     try {
       const jobRef = doc(db, 'jobs', jobId);
       
-      // Instead of deleting, we'll mark it as "deleted" or "archived"
       await updateDoc(jobRef, {
         status: 'archived',
         updatedAt: Timestamp.now()
@@ -197,33 +219,37 @@ const EmployerJobList = () => {
 
   const getStatusColor = (status) => {
     switch (status) {
-      case 'active': return '#dcfce7';
-      case 'archived': return '#fef3c7';
-      case 'draft': return '#e0e7ff';
-      case 'closed': return '#f3f4f6';
-      default: return '#f1f5f9';
+      case 'active': return { bg: '#d1fae5', text: '#065f46' };
+      case 'archived': return { bg: '#fef3c7', text: '#92400e' };
+      case 'draft': return { bg: '#e0e7ff', text: '#3730a3' };
+      case 'closed': return { bg: '#f3f4f6', text: '#374151' };
+      default: return { bg: '#f1f5f9', text: '#475569' };
     }
   };
 
-  const getStatusTextColor = (status) => {
+  const getStatusIcon = (status) => {
     switch (status) {
-      case 'active': return '#166534';
-      case 'archived': return '#92400e';
-      case 'draft': return '#3730a3';
-      case 'closed': return '#374151';
-      default: return '#475569';
+      case 'active': return <FiCheckCircle />;
+      case 'archived': return <FiArchive />;
+      case 'draft': return <FiFileText />;
+      case 'closed': return <FiXCircle />;
+      default: return <FiClock />;
     }
   };
 
-  const getApplicantStatusColor = (status) => {
-    const statusObj = applicantStatuses.find(s => s.value === status);
-    return statusObj ? statusObj.color : '#6b7280';
+  const handleLogout = async () => {
+    try {
+      await auth.signOut();
+      navigate('/login');
+    } catch (error) {
+      console.error('Error logging out:', error);
+    }
   };
 
   if (loading) {
     return (
-      <div className="employer-job-list">
-        <div className="container">
+      <div className="employer-dashboard-container">
+        <div className="loading-overlay">
           <div className="loading-spinner">Loading jobs...</div>
         </div>
       </div>
@@ -231,263 +257,362 @@ const EmployerJobList = () => {
   }
 
   return (
-    <div className="employer-job-list">
-      {/* NAVBAR */}
-      <nav className="navbar">
-        <div className="logo">JobLytics</div>
-
-        <ul className="nav-links">
-          <li><a href="/EmployerDashboard">Home</a></li>
-          <li><a href="/PostJobPage">Jobs</a></li>
-          <li><a href="/Profile">Profile</a></li>
-          <li><a href="/Applicants">Applicants</a></li>
-        </ul>
-
-        <div className="nav-actions">
+    <div className="employer-dashboard-container">
+      {/* TOP NAVBAR */}
+      <nav className="employer-top-navbar">
+        <div className="employer-nav-brand">
+          <span className="employer-brand-logo">JobLytics</span>
+          <span className="employer-user-welcome">
+            Job Management
+          </span>
+        </div>
+        
+        <div className="employer-nav-center">
+          <ul className="employer-nav-links">
+            <li><Link to="/EmployerDashboard">Dashboard</Link></li>
+            <li><Link to="/EmployerJobList" className="active">Jobs</Link></li>
+            <li><Link to="/Profile">Profile</Link></li>
+            <li><Link to="/Applicants">Applicants</Link></li>
+          </ul>
+        </div>
+        
+        <div className="employer-nav-actions">
+          <div className="employer-notification-container">
+            <button 
+              className="employer-notification-bell"
+              onClick={() => setNotificationsOpen(!notificationsOpen)}
+            >
+              <FiBell className="employer-notification-icon" />
+              <span className="employer-notification-badge">3</span>
+            </button>
+            
+            {notificationsOpen && (
+              <div className="employer-notification-dropdown open">
+                <div className="employer-notification-header">
+                  <h3>Notifications</h3>
+                  <button className="employer-mark-all-read">Mark all as read</button>
+                </div>
+                <div className="employer-notification-list">
+                  <div className="employer-notification-item unread">
+                    <div className="employer-notification-content">
+                      <div className="employer-notification-title">New Application</div>
+                      <div className="employer-notification-message">
+                        John Doe applied for Senior Developer position
+                      </div>
+                      <div className="employer-notification-time">2 hours ago</div>
+                    </div>
+                    <div className="employer-unread-dot"></div>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+          
+          <div className="employer-icon-button-container">
+            <button 
+              className="employer-icon-button"
+              onClick={() => navigate('/messages')}
+            >
+              <FiMessageSquare className="employer-icon-button-icon" />
+            </button>
+          </div>
+          
+          <div className="employer-user-info">
+            {auth.currentUser?.displayName || 'Employer'}
+          </div>
+          
           <button 
-            onClick={() => window.history.back()} 
-            className="login-btn"
-            style={{ background: 'none', border: 'none', cursor: 'pointer', font: 'inherit' }}
+            onClick={handleLogout}
+            className="employer-icon-button"
+            style={{ background: 'rgba(255, 255, 255, 0.1)', color: 'white' }}
           >
-            Back
-          </button>
-          <button 
-            onClick={async () => {
-              try {
-                await auth.signOut();
-                navigate('/login');
-              } catch (error) {
-                console.error('Error signing out:', error);
-              }
-            }}
-            className="signup-btn"
-            style={{ background: 'none', border: 'none', cursor: 'pointer', font: 'inherit' }}
-          >
-            Log Out
+            <FiLogOut />
           </button>
         </div>
       </nav>
 
-      <div className="container">
-        <header className="page-header">
-          <h1>Job Management</h1>
-          <p>Manage your job postings and track applications</p>
-        </header>
+      {/* MAIN LAYOUT */}
+      <div className="employer-dashboard-layout">
+        {/* SIDEBAR */}
+        <aside className="employer-sidebar">
+          <div className="employer-logo">JobLytics</div>
+          <ul className="employer-menu">
+            <li>
+              <Link to="/EmployerDashboard" className="employer-menu-link">
+                <span className="employer-menu-icon"><FiHome /></span>
+                <span className="employer-menu-text">Dashboard</span>
+              </Link>
+            </li>
+            <li className="active">
+              <Link to="/EmployerJobList" className="employer-menu-link">
+                <span className="employer-menu-icon"><FiBriefcase /></span>
+                <span className="employer-menu-text">Jobs</span>
+                <span className="employer-menu-badge">{jobs.filter(j => j.status === 'active').length}</span>
+              </Link>
+            </li>
+            <li>
+              <Link to="/Applicants" className="employer-menu-link">
+                <span className="employer-menu-icon"><FiUsers /></span>
+                <span className="employer-menu-text">Applicants</span>
+                <span className="employer-menu-badge employer-badge-red">12</span>
+              </Link>
+            </li>
+            <li>
+              <Link to="/Profile" className="employer-menu-link">
+                <span className="employer-menu-icon"><FiUser /></span>
+                <span className="employer-menu-text">Profile</span>
+              </Link>
+            </li>
+          </ul>
+        </aside>
 
-        <div className="layout">
-          {/* Job List Sidebar */}
-          <div className="job-sidebar">
-            <div className="sidebar-header">
-              <h2>Your Job Posts</h2>
-              <button 
-                className="btn-primary"
-                onClick={() => navigate('/PostJobPage')}
-              >
-                + New Job
-              </button>
-            </div>
-
-            {/* Search and Filter */}
-            <div className="search-filter-section">
-              <div className="search-box">
-                <input
-                  type="text"
-                  placeholder="Search jobs..."
+        {/* MAIN CONTENT */}
+        <main className="employer-main-content">
+          <header className="employer-header">
+            <h1>Job Management</h1>
+            <div className="employer-search-bar">
+              <div className="employer-search-box">
+                <FiSearch className="search-icon" />
+                <input 
+                  type="text" 
+                  placeholder="Search jobs..." 
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
+                  className="employer-search-input"
                 />
-                <span className="search-icon">🔍</span>
               </div>
-              <select 
-                value={statusFilter}
-                onChange={(e) => setStatusFilter(e.target.value)}
-                className="status-filter"
+              <button 
+                className="employer-primary-btn"
+                onClick={() => navigate('/PostJobPage')}
               >
-                <option value="all">All Statuses</option>
-                <option value="active">Active</option>
-                <option value="draft">Draft</option>
-                <option value="closed">Closed</option>
-                <option value="archived">Archived</option>
-              </select>
+                <FiPlus /> Post New Job
+              </button>
+              <div className="employer-user-info">
+                Welcome, {auth.currentUser?.displayName || 'Employer'}
+              </div>
             </div>
+          </header>
 
-            <div className="job-filters">
-              <button 
-                className={`filter-btn ${statusFilter === 'all' ? 'active' : ''}`}
-                onClick={() => setStatusFilter('all')}
-              >
-                All ({filteredJobs.length})
-              </button>
-              <button 
-                className={`filter-btn ${statusFilter === 'active' ? 'active' : ''}`}
-                onClick={() => setStatusFilter('active')}
-              >
-                Active ({activeJobs.length})
-              </button>
-              <button 
-                className={`filter-btn ${statusFilter === 'draft' ? 'active' : ''}`}
-                onClick={() => setStatusFilter('draft')}
-              >
-                Draft ({draftJobs.length})
-              </button>
+          {/* Quick Stats */}
+          <div className="employer-quick-stats">
+            <div className="employer-stat-card employer-stat-highlight">
+              <h3>Active Jobs</h3>
+              <p>{activeJobs.length}</p>
+              <span className="employer-stat-trend">
+                {activeJobs.length > 0 ? 'Live postings' : 'No active jobs'}
+              </span>
             </div>
-
-            <div className="job-list">
-              {filteredJobs.length === 0 ? (
-                <div className="no-jobs-message">
-                  <p>No jobs found matching your criteria.</p>
-                  <button 
-                    className="btn-primary"
-                    onClick={() => navigate('/PostJobPage')}
-                  >
-                    Create Your First Job
-                  </button>
-                </div>
-              ) : (
-                <>
-                  {activeJobs.length > 0 && (
-                    <>
-                      <div className="section-divider">Active Jobs</div>
-                      {activeJobs.map(job => (
-                        <div 
-                          key={job.id} 
-                          className={`job-item ${selectedJob?.id === job.id ? 'selected' : ''}`}
-                          onClick={() => handleJobSelect(job)}
-                        >
-                          <div className="job-item-header">
-                            <h3>{job.title}</h3>
-                            <span 
-                              className="status-badge"
-                              style={{
-                                backgroundColor: getStatusColor(job.status),
-                                color: getStatusTextColor(job.status)
-                              }}
-                            >
-                              {job.status}
-                            </span>
-                          </div>
-                          <p className="company">{job.department} • {job.location}</p>
-                          <div className="job-meta">
-                            <span className="applicants">{job.applicants || 0} applicants</span>
-                            <span className="views">{job.views || 0} views</span>
-                          </div>
-                        </div>
-                      ))}
-                    </>
-                  )}
-                  
-                  {draftJobs.length > 0 && (
-                    <>
-                      <div className="section-divider">Drafts</div>
-                      {draftJobs.map(job => (
-                        <div 
-                          key={job.id} 
-                          className={`job-item ${selectedJob?.id === job.id ? 'selected' : ''}`}
-                          onClick={() => handleJobSelect(job)}
-                        >
-                          <div className="job-item-header">
-                            <h3>{job.title}</h3>
-                            <span 
-                              className="status-badge"
-                              style={{
-                                backgroundColor: getStatusColor(job.status),
-                                color: getStatusTextColor(job.status)
-                              }}
-                            >
-                              {job.status}
-                            </span>
-                          </div>
-                          <p className="company">{job.department} • {job.location}</p>
-                          <div className="job-meta">
-                            <span className="applicants">{job.applicants || 0} applicants</span>
-                            <span className="views">{job.views || 0} views</span>
-                          </div>
-                        </div>
-                      ))}
-                    </>
-                  )}
-                  
-                  {closedJobs.length > 0 && (
-                    <>
-                      <div className="section-divider">Closed</div>
-                      {closedJobs.map(job => (
-                        <div 
-                          key={job.id} 
-                          className={`job-item ${selectedJob?.id === job.id ? 'selected' : ''}`}
-                          onClick={() => handleJobSelect(job)}
-                        >
-                          <div className="job-item-header">
-                            <h3>{job.title}</h3>
-                            <span 
-                              className="status-badge"
-                              style={{
-                                backgroundColor: getStatusColor(job.status),
-                                color: getStatusTextColor(job.status)
-                              }}
-                            >
-                              {job.status}
-                            </span>
-                          </div>
-                          <p className="company">{job.department} • {job.location}</p>
-                          <div className="job-meta">
-                            <span className="applicants">{job.applicants || 0} applicants</span>
-                            <span className="views">{job.views || 0} views</span>
-                          </div>
-                        </div>
-                      ))}
-                    </>
-                  )}
-                  
-                  {archivedJobs.length > 0 && (
-                    <>
-                      <div className="section-divider">Archived</div>
-                      {archivedJobs.map(job => (
-                        <div 
-                          key={job.id} 
-                          className={`job-item ${selectedJob?.id === job.id ? 'selected' : ''}`}
-                          onClick={() => handleJobSelect(job)}
-                        >
-                          <div className="job-item-header">
-                            <h3>{job.title}</h3>
-                            <span 
-                              className="status-badge"
-                              style={{
-                                backgroundColor: getStatusColor(job.status),
-                                color: getStatusTextColor(job.status)
-                              }}
-                            >
-                              {job.status}
-                            </span>
-                          </div>
-                          <p className="company">{job.department} • {job.location}</p>
-                          <div className="job-meta">
-                            <span className="applicants">{job.applicants || 0} applicants</span>
-                            <span className="views">{job.views || 0} views</span>
-                          </div>
-                        </div>
-                      ))}
-                    </>
-                  )}
-                </>
-              )}
+            <div className="employer-stat-card">
+              <h3>Total Applicants</h3>
+              <p>{jobs.reduce((sum, job) => sum + (job.applicants || 0), 0)}</p>
+              <span className="employer-stat-trend">All jobs</span>
+            </div>
+            <div className="employer-stat-card">
+              <h3>In Draft</h3>
+              <p>{draftJobs.length}</p>
+              <span className="employer-stat-trend">
+                {draftJobs.length > 0 ? 'Pending review' : 'No drafts'}
+              </span>
+            </div>
+            <div className="employer-stat-card">
+              <h3>Archived</h3>
+              <p>{archivedJobs.length}</p>
+              <span className="employer-stat-trend">
+                {archivedJobs.length > 0 ? 'Past postings' : 'No archived jobs'}
+              </span>
             </div>
           </div>
 
-          {/* Job Details Panel */}
-          <div className="job-details-panel">
-            {selectedJob ? (
-              <>
-                <div className="panel-header">
-                  <div className="job-title-section">
-                    <h2>{selectedJob.title}</h2>
+          {/* Main Content Grid */}
+          <div className="employer-content-grid">
+            {/* Job List Panel */}
+            <div className="employer-content-section">
+              <div className="employer-section-header">
+                <h3>Your Job Postings</h3>
+                <div className="employer-filter-controls">
+                  <div className="filter-group">
+                    <FiFilter className="filter-icon" />
+                    <select 
+                      value={statusFilter}
+                      onChange={(e) => setStatusFilter(e.target.value)}
+                      className="employer-status-filter"
+                    >
+                      <option value="all">All Status</option>
+                      <option value="active">Active</option>
+                      <option value="draft">Draft</option>
+                      <option value="closed">Closed</option>
+                      <option value="archived">Archived</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+
+              <div className="employer-job-list-container">
+                {filteredJobs.length === 0 ? (
+                  <div className="employer-empty-state">
+                    <FiBriefcase size={48} />
+                    <h4>No jobs found</h4>
+                    <p>Create your first job posting to get started</p>
+                    <button 
+                      className="employer-primary-btn"
+                      onClick={() => navigate('/PostJobPage')}
+                    >
+                      <FiPlus /> Create Job
+                    </button>
+                  </div>
+                ) : (
+                  <div className="employer-job-list">
+                    {activeJobs.length > 0 && (
+                      <>
+                        <div className="job-section-header">Active Jobs ({activeJobs.length})</div>
+                        {activeJobs.map(job => (
+                          <div 
+                            key={job.id} 
+                            className={`employer-job-item ${selectedJob?.id === job.id ? 'selected' : ''}`}
+                            onClick={() => handleJobSelect(job)}
+                          >
+                            <div className="job-item-content">
+                              <div className="job-item-header">
+                                <h4>{job.title}</h4>
+                                <span 
+                                  className="job-status-badge"
+                                  style={{
+                                    backgroundColor: getStatusColor(job.status).bg,
+                                    color: getStatusColor(job.status).text
+                                  }}
+                                >
+                                  {getStatusIcon(job.status)}
+                                  {job.status}
+                                </span>
+                              </div>
+                              <div className="job-item-meta">
+                                <span className="job-department">
+                                  <FiBriefcase size={14} /> {job.department}
+                                </span>
+                                <span className="job-location">
+                                  <FiMapPin size={14} /> {job.location}
+                                </span>
+                                <span className="job-salary">
+                                  <FiDollarSign size={14} /> {job.compensation || 'Not specified'}
+                                </span>
+                              </div>
+                              <div className="job-stats">
+                                <span className="applicant-count">
+                                  <FiUsers size={14} /> {job.applicants || 0} applicants
+                                </span>
+                                <span className="posted-date">
+                                  <FiCalendar size={14} /> {job.updatedAt ? new Date(job.updatedAt.toDate()).toLocaleDateString() : 'Recently'}
+                                </span>
+                              </div>
+                            </div>
+                            <div className="job-item-actions">
+                              <button 
+                                className="icon-btn"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleEdit(job);
+                                }}
+                              >
+                                <FiEdit />
+                              </button>
+                            </div>
+                          </div>
+                        ))}
+                      </>
+                    )}
+
+                    {draftJobs.length > 0 && (
+                      <>
+                        <div className="job-section-header">Drafts ({draftJobs.length})</div>
+                        {draftJobs.map(job => (
+                          <div 
+                            key={job.id} 
+                            className={`employer-job-item ${selectedJob?.id === job.id ? 'selected' : ''}`}
+                            onClick={() => handleJobSelect(job)}
+                          >
+                            <div className="job-item-content">
+                              <div className="job-item-header">
+                                <h4>{job.title}</h4>
+                                <span 
+                                  className="job-status-badge"
+                                  style={{
+                                    backgroundColor: getStatusColor(job.status).bg,
+                                    color: getStatusColor(job.status).text
+                                  }}
+                                >
+                                  {getStatusIcon(job.status)}
+                                  {job.status}
+                                </span>
+                              </div>
+                              <div className="job-item-meta">
+                                <span className="job-department">
+                                  <FiBriefcase size={14} /> {job.department}
+                                </span>
+                                <span className="job-location">
+                                  <FiMapPin size={14} /> {job.location}
+                                </span>
+                              </div>
+                            </div>
+                          </div>
+                        ))}
+                      </>
+                    )}
+
+                    {archivedJobs.length > 0 && (
+                      <>
+                        <div className="job-section-header">Archived ({archivedJobs.length})</div>
+                        {archivedJobs.map(job => (
+                          <div 
+                            key={job.id} 
+                            className={`employer-job-item ${selectedJob?.id === job.id ? 'selected' : ''}`}
+                            onClick={() => handleJobSelect(job)}
+                          >
+                            <div className="job-item-content">
+                              <div className="job-item-header">
+                                <h4>{job.title}</h4>
+                                <span 
+                                  className="job-status-badge"
+                                  style={{
+                                    backgroundColor: getStatusColor(job.status).bg,
+                                    color: getStatusColor(job.status).text
+                                  }}
+                                >
+                                  {getStatusIcon(job.status)}
+                                  {job.status}
+                                </span>
+                              </div>
+                              <div className="job-item-meta">
+                                <span className="job-department">
+                                  <FiBriefcase size={14} /> {job.department}
+                                </span>
+                                <span className="job-location">
+                                  <FiMapPin size={14} /> {job.location}
+                                </span>
+                              </div>
+                            </div>
+                          </div>
+                        ))}
+                      </>
+                    )}
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Job Details Panel */}
+            <div className="employer-content-section">
+              {selectedJob ? (
+                <>
+                  <div className="employer-section-header">
+                    <h3>Job Details</h3>
                     <div className="job-actions">
                       <select 
                         value={selectedJob.status}
                         onChange={(e) => handleStatusChange(selectedJob.id, e.target.value)}
-                        className="status-select"
+                        className="employer-status-select"
                         style={{
-                          backgroundColor: getStatusColor(selectedJob.status),
-                          color: getStatusTextColor(selectedJob.status)
+                          backgroundColor: getStatusColor(selectedJob.status).bg,
+                          color: getStatusColor(selectedJob.status).text
                         }}
                       >
                         <option value="draft">Draft</option>
@@ -496,286 +621,320 @@ const EmployerJobList = () => {
                         <option value="archived">Archived</option>
                       </select>
                       <button 
-                        className="btn-secondary"
+                        className="employer-secondary-btn"
                         onClick={() => handleEdit(selectedJob)}
                       >
-                        Edit
+                        <FiEdit /> Edit
                       </button>
                       <button 
-                        className="btn-danger"
+                        className="employer-danger-btn"
                         onClick={() => handleDelete(selectedJob.id)}
                       >
-                        Delete
+                        <FiTrash2 /> Archive
                       </button>
                     </div>
                   </div>
-                  <p className="company-location">{selectedJob.department} • {selectedJob.location}</p>
-                  <div className="job-tags">
-                    <span className="tag">{selectedJob.jobStatus}</span>
-                    <span className="tag salary">{selectedJob.compensation}</span>
-                    <span className="tag">{selectedJob.minExperience}</span>
-                    <span 
-                      className="status-tag"
-                      style={{
-                        backgroundColor: getStatusColor(selectedJob.status),
-                        color: getStatusTextColor(selectedJob.status)
-                      }}
-                    >
-                      {selectedJob.status}
-                    </span>
-                  </div>
-                </div>
 
-                <div className="tab-navigation">
-                  <button 
-                    className={`tab-btn ${activeTab === 'view' ? 'active' : ''}`}
-                    onClick={() => setActiveTab('view')}
-                  >
-                    Job Details
-                  </button>
-                  <button 
-                    className={`tab-btn ${activeTab === 'applicants' ? 'active' : ''}`}
-                    onClick={() => setActiveTab('applicants')}
-                  >
-                    Applicants ({selectedJob.applicants || 0})
-                  </button>
-                  <button 
-                    className={`tab-btn ${activeTab === 'edit' ? 'active' : ''}`}
-                    onClick={() => handleEdit(selectedJob)}
-                  >
-                    Edit Job
-                  </button>
-                </div>
-
-                <div className="tab-content">
-                  {activeTab === 'view' && (
-                    <div className="view-tab">
-                      <div className="section">
-                        <h3>Job Description</h3>
-                        <p>{selectedJob.description}</p>
-                      </div>
-
-                      <div className="section">
-                        <h3>Qualifications</h3>
-                        <p>{selectedJob.qualifications}</p>
-                      </div>
-
-                      <div className="section">
-                        <h3>Experience Required</h3>
-                        <p>{selectedJob.experienceRequired}</p>
-                      </div>
-
-                      {selectedJob.questions && selectedJob.questions.length > 0 && (
-                        <div className="section">
-                          <h3>Candidate Questions</h3>
-                          <ul className="requirements-list">
-                            {selectedJob.questions.map((question, index) => (
-                              <li key={index}>{question}</li>
-                            ))}
-                          </ul>
-                        </div>
-                      )}
-
-                      {selectedJob.hiringProcess && (
-                        <div className="section">
-                          <h3>Hiring Process</h3>
-                          <p>{selectedJob.hiringProcess}</p>
-                        </div>
-                      )}
-
-                      <div className="job-stats">
-                        <div className="stat-card">
-                          <span className="stat-number">{selectedJob.applicants || 0}</span>
-                          <span className="stat-label">Total Applicants</span>
-                        </div>
-                        <div className="stat-card">
-                          <span className="stat-number">{selectedJob.views || 0}</span>
-                          <span className="stat-label">Job Views</span>
-                        </div>
-                        <div className="stat-card">
-                          <span className="stat-number">
-                            {selectedJob.updatedAt ? new Date(selectedJob.updatedAt.toDate()).toLocaleDateString() : 'N/A'}
-                          </span>
-                          <span className="stat-label">Last Updated</span>
-                        </div>
-                      </div>
+                  <div className="job-details-container">
+                    {/* Tab Navigation */}
+                    <div className="job-details-tabs">
+                      <button 
+                        className={`job-tab-btn ${activeTab === 'view' ? 'active' : ''}`}
+                        onClick={() => setActiveTab('view')}
+                      >
+                        Overview
+                      </button>
+                      <button 
+                        className={`job-tab-btn ${activeTab === 'applicants' ? 'active' : ''}`}
+                        onClick={() => setActiveTab('applicants')}
+                      >
+                        Applicants ({selectedJob.applicants || 0})
+                      </button>
+                      <button 
+                        className={`job-tab-btn ${activeTab === 'edit' ? 'active' : ''}`}
+                        onClick={() => handleEdit(selectedJob)}
+                      >
+                        Edit Details
+                      </button>
                     </div>
-                  )}
 
-                  {activeTab === 'applicants' && (
-                    <div className="applicants-tab">
-                      <div className="applicants-header">
-                        <h3>Applicant Management</h3>
-                        <div className="applicant-stats">
-                          {applicantStatuses.map(status => (
-                            <div key={status.value} className="applicant-stat">
-                              <span 
-                                className="stat-dot"
-                                style={{ backgroundColor: status.color }}
-                              ></span>
-                              <span>0 {status.label}</span>
+                    {/* Tab Content */}
+                    <div className="job-tab-content">
+                      {activeTab === 'view' && (
+                        <div className="job-overview">
+                          <div className="job-basic-info">
+                            <h2>{selectedJob.title}</h2>
+                            <div className="job-tags">
+                              <span className="job-tag">
+                                <FiBriefcase /> {selectedJob.jobStatus}
+                              </span>
+                              <span className="job-tag salary">
+                                <FiDollarSign /> {selectedJob.compensation || 'Not specified'}
+                              </span>
+                              <span className="job-tag">
+                                <FiMapPin /> {selectedJob.location}
+                              </span>
+                              <span className="job-tag">
+                                {selectedJob.minExperience}
+                              </span>
                             </div>
-                          ))}
+                            <div className="job-meta">
+                              <span className="meta-item">
+                                <strong>Department:</strong> {selectedJob.department || 'Not specified'}
+                              </span>
+                            </div>
+                          </div>
+
+                          <div className="job-section">
+                            <h4>Job Description</h4>
+                            <div className="job-content">
+                              {selectedJob.description || 'No description provided'}
+                            </div>
+                          </div>
+
+                          {selectedJob.qualifications && (
+                            <div className="job-section">
+                              <h4>Qualifications</h4>
+                              <div className="job-content">
+                                {selectedJob.qualifications}
+                              </div>
+                            </div>
+                          )}
+
+                          {selectedJob.experienceRequired && (
+                            <div className="job-section">
+                              <h4>Experience Required</h4>
+                              <div className="job-content">
+                                {selectedJob.experienceRequired}
+                              </div>
+                            </div>
+                          )}
+
+                          {selectedJob.questions && selectedJob.questions.length > 0 && (
+                            <div className="job-section">
+                              <h4>Candidate Questions</h4>
+                              <ul className="job-questions">
+                                {selectedJob.questions.map((question, index) => (
+                                  <li key={index}>{question}</li>
+                                ))}
+                              </ul>
+                            </div>
+                          )}
+
+                          {selectedJob.hiringProcess && (
+                            <div className="job-section">
+                              <h4>Hiring Process</h4>
+                              <div className="job-content">
+                                {selectedJob.hiringProcess}
+                              </div>
+                            </div>
+                          )}
+
+                          <div className="job-stats-cards">
+                            <div className="job-stat-card">
+                              <div className="stat-number">{selectedJob.applicants || 0}</div>
+                              <div className="stat-label">Total Applicants</div>
+                            </div>
+                            <div className="job-stat-card">
+                              <div className="stat-number">{selectedJob.views || 0}</div>
+                              <div className="stat-label">Job Views</div>
+                            </div>
+                            <div className="job-stat-card">
+                              <div className="stat-number">
+                                {selectedJob.updatedAt ? new Date(selectedJob.updatedAt.toDate()).toLocaleDateString() : 'N/A'}
+                              </div>
+                              <div className="stat-label">Last Updated</div>
+                            </div>
+                          </div>
                         </div>
-                      </div>
-                      
-                      <div className="no-applicants">
-                        <p>No applicants yet for this position.</p>
-                        <p>Share this job posting to attract candidates.</p>
-                      </div>
+                      )}
+
+                      {activeTab === 'applicants' && (
+                        <div className="applicants-view">
+                          <div className="applicants-header">
+                            <h4>Applicant Management</h4>
+                            <div className="applicant-stats-summary">
+                              {applicantStatuses.map(status => (
+                                <div key={status.value} className="applicant-stat-item">
+                                  <span 
+                                    className="stat-indicator"
+                                    style={{ backgroundColor: status.color }}
+                                  >
+                                    {status.icon}
+                                  </span>
+                                  <span className="stat-count">0</span>
+                                  <span className="stat-label">{status.label}</span>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                          
+                          <div className="no-applicants-view">
+                            <FiUsers size={48} />
+                            <h5>No applicants yet</h5>
+                            <p>Share this job posting to attract candidates</p>
+                          </div>
+                        </div>
+                      )}
+
+                      {activeTab === 'edit' && (
+                        <div className="edit-job-view">
+                          <h4>Edit Job Posting</h4>
+                          
+                          <div className="edit-form">
+                            <div className="form-grid">
+                              <div className="form-group">
+                                <label>Job Title *</label>
+                                <input 
+                                  type="text" 
+                                  value={editForm.title}
+                                  onChange={(e) => setEditForm({...editForm, title: e.target.value})}
+                                  placeholder="Enter job title"
+                                />
+                              </div>
+                              
+                              <div className="form-group">
+                                <label>Job Type</label>
+                                <select 
+                                  value={editForm.jobStatus}
+                                  onChange={(e) => setEditForm({...editForm, jobStatus: e.target.value})}
+                                >
+                                  <option value="">Select job type</option>
+                                  <option value="Full-time">Full-time</option>
+                                  <option value="Part-time">Part-time</option>
+                                  <option value="Contract">Contract</option>
+                                  <option value="Remote">Remote</option>
+                                </select>
+                              </div>
+                              
+                              <div className="form-group">
+                                <label>Department</label>
+                                <input 
+                                  type="text" 
+                                  value={editForm.department}
+                                  onChange={(e) => setEditForm({...editForm, department: e.target.value})}
+                                  placeholder="Enter department"
+                                />
+                              </div>
+                              
+                              <div className="form-group">
+                                <label>Experience Level</label>
+                                <select 
+                                  value={editForm.minExperience}
+                                  onChange={(e) => setEditForm({...editForm, minExperience: e.target.value})}
+                                >
+                                  <option value="">Select experience level</option>
+                                  <option value="Entry Level">Entry Level</option>
+                                  <option value="Mid Level">Mid Level</option>
+                                  <option value="Senior Level">Senior Level</option>
+                                </select>
+                              </div>
+                              
+                              <div className="form-group">
+                                <label>Location</label>
+                                <input 
+                                  type="text" 
+                                  value={editForm.location}
+                                  onChange={(e) => setEditForm({...editForm, location: e.target.value})}
+                                  placeholder="Enter location"
+                                />
+                              </div>
+                              
+                              <div className="form-group">
+                                <label>Compensation</label>
+                                <input 
+                                  type="text" 
+                                  value={editForm.compensation}
+                                  onChange={(e) => setEditForm({...editForm, compensation: e.target.value})}
+                                  placeholder="Enter salary range"
+                                />
+                              </div>
+                            </div>
+                            
+                            <div className="form-group">
+                              <label>Job Description *</label>
+                              <textarea 
+                                value={editForm.description}
+                                onChange={(e) => setEditForm({...editForm, description: e.target.value})}
+                                rows="4"
+                                placeholder="Describe the role and responsibilities..."
+                              />
+                            </div>
+                            
+                            <div className="form-group">
+                              <label>Qualifications</label>
+                              <textarea 
+                                value={editForm.qualifications}
+                                onChange={(e) => setEditForm({...editForm, qualifications: e.target.value})}
+                                rows="3"
+                                placeholder="List required qualifications..."
+                              />
+                            </div>
+                            
+                            <div className="form-group">
+                              <label>Experience Required</label>
+                              <textarea 
+                                value={editForm.experienceRequired}
+                                onChange={(e) => setEditForm({...editForm, experienceRequired: e.target.value})}
+                                rows="3"
+                                placeholder="Detail specific experience requirements..."
+                              />
+                            </div>
+                            
+                            <div className="form-group">
+                              <label>Candidate Questions (one per line)</label>
+                              <textarea 
+                                value={editForm.questions.join('\n')}
+                                onChange={(e) => setEditForm({...editForm, questions: e.target.value.split('\n')})}
+                                rows="3"
+                                placeholder="Enter questions for candidates..."
+                              />
+                            </div>
+                            
+                            <div className="form-group">
+                              <label>Hiring Process</label>
+                              <textarea 
+                                value={editForm.hiringProcess}
+                                onChange={(e) => setEditForm({...editForm, hiringProcess: e.target.value})}
+                                rows="3"
+                                placeholder="Describe your hiring process..."
+                              />
+                            </div>
+                            
+                            <div className="form-actions">
+                              <button 
+                                className="employer-secondary-btn"
+                                onClick={() => {
+                                  setEditingJob(null);
+                                  setActiveTab('view');
+                                }}
+                              >
+                                Cancel
+                              </button>
+                              <button 
+                                className="employer-primary-btn"
+                                onClick={handleSaveEdit}
+                                disabled={!editForm.title || !editForm.description}
+                              >
+                                Save Changes
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      )}
                     </div>
-                  )}
-
-                  {activeTab === 'edit' && (
-                    <div className="edit-tab">
-                      <div className="form-section">
-                        <h3>Edit Job Posting</h3>
-                        <div className="form-grid">
-                          <div className="form-group">
-                            <label>Job Title *</label>
-                            <input 
-                              type="text" 
-                              value={editForm.title}
-                              onChange={(e) => setEditForm({...editForm, title: e.target.value})}
-                            />
-                          </div>
-                          <div className="form-group">
-                            <label>Job Status</label>
-                            <select 
-                              value={editForm.jobStatus}
-                              onChange={(e) => setEditForm({...editForm, jobStatus: e.target.value})}
-                            >
-                              <option value="">Select job status</option>
-                              <option value="Full-time">Full-time</option>
-                              <option value="Part-time">Part-time</option>
-                              <option value="Contract">Contract</option>
-                              <option value="Remote">Remote</option>
-                            </select>
-                          </div>
-                          <div className="form-group">
-                            <label>Department</label>
-                            <input 
-                              type="text" 
-                              value={editForm.department}
-                              onChange={(e) => setEditForm({...editForm, department: e.target.value})}
-                            />
-                          </div>
-                          <div className="form-group">
-                            <label>Minimum Experience</label>
-                            <select 
-                              value={editForm.minExperience}
-                              onChange={(e) => setEditForm({...editForm, minExperience: e.target.value})}
-                            >
-                              <option value="">Select experience level</option>
-                              <option value="Entry Level">Entry Level (0-2 years)</option>
-                              <option value="Mid Level">Mid Level (2-5 years)</option>
-                              <option value="Senior Level">Senior Level (5+ years)</option>
-                            </select>
-                          </div>
-                          <div className="form-group">
-                            <label>Location</label>
-                            <input 
-                              type="text" 
-                              value={editForm.location}
-                              onChange={(e) => setEditForm({...editForm, location: e.target.value})}
-                            />
-                          </div>
-                          <div className="form-group">
-                            <label>Compensation</label>
-                            <input 
-                              type="text" 
-                              value={editForm.compensation}
-                              onChange={(e) => setEditForm({...editForm, compensation: e.target.value})}
-                            />
-                          </div>
-                        </div>
-                        
-                        <div className="form-group full-width">
-                          <label>Job Description *</label>
-                          <textarea 
-                            value={editForm.description}
-                            onChange={(e) => setEditForm({...editForm, description: e.target.value})}
-                            rows="4"
-                          />
-                        </div>
-                        
-                        <div className="form-group full-width">
-                          <label>Qualifications</label>
-                          <textarea 
-                            value={editForm.qualifications}
-                            onChange={(e) => setEditForm({...editForm, qualifications: e.target.value})}
-                            rows="4"
-                          />
-                        </div>
-
-                        <div className="form-group full-width">
-                          <label>Experience Required</label>
-                          <textarea 
-                            value={editForm.experienceRequired}
-                            onChange={(e) => setEditForm({...editForm, experienceRequired: e.target.value})}
-                            rows="4"
-                          />
-                        </div>
-
-                        <div className="form-group full-width">
-                          <label>Questions (one per line)</label>
-                          <textarea 
-                            value={editForm.questions.join('\n')}
-                            onChange={(e) => setEditForm({...editForm, questions: e.target.value.split('\n')})}
-                            rows="4"
-                          />
-                        </div>
-
-                        <div className="form-group full-width">
-                          <label>Hiring Process</label>
-                          <textarea 
-                            value={editForm.hiringProcess}
-                            onChange={(e) => setEditForm({...editForm, hiringProcess: e.target.value})}
-                            rows="4"
-                          />
-                        </div>
-                        
-                        <div className="form-actions">
-                          <button 
-                            className="btn-secondary"
-                            onClick={() => {
-                              setEditingJob(null);
-                              setActiveTab('view');
-                            }}
-                          >
-                            Cancel
-                          </button>
-                          <button 
-                            className="btn-primary"
-                            onClick={handleSaveEdit}
-                            disabled={!editForm.title || !editForm.description}
-                          >
-                            Save Changes
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-                  )}
+                  </div>
+                </>
+              ) : (
+                <div className="no-job-selected">
+                  <FiBriefcase size={48} />
+                  <h4>Select a Job</h4>
+                  <p>Choose a job posting from the list to view details and manage applications</p>
                 </div>
-              </>
-            ) : (
-              <div className="no-job-selected">
-                <div className="placeholder-content">
-                  <h3>Select a job to view details</h3>
-                  <p>Choose a job posting from the list to see applicants, edit details, or manage the posting.</p>
-                  {jobs.length === 0 && (
-                    <button 
-                      className="btn-primary"
-                      onClick={() => navigate('/PostJobPage')}
-                    >
-                      Create Your First Job
-                    </button>
-                  )}
-                </div>
-              </div>
-            )}
+              )}
+            </div>
           </div>
-        </div>
+        </main>
       </div>
     </div>
   );

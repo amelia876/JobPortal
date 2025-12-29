@@ -1,0 +1,26 @@
+{
+  "success": true,
+  "availableModels": [
+    {
+      "name": "gemini-1.5-flash",
+      "status": "❌ Failed: [GoogleGenerativeAI Error]: Error fetching from https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent: [404 Not Found] models/gemini-1.5-flash is not found for API version v1beta, or is not supported for generateContent. Call ListModels to see the list of available models and their supported methods."
+    },
+    {
+      "name": "gemini-1.0-pro",
+      "status": "❌ Failed: [GoogleGenerativeAI Error]: Error fetching from https://generativelanguage.googleapis.com/v1beta/models/gemini-1.0-pro:generateContent: [404 Not Found] models/gemini-1.0-pro is not found for API version v1beta, or is not supported for generateContent. Call ListModels to see the list of available models and their supported methods."
+    },
+    {
+      "name": "gemini-1.5-pro",
+      "status": "❌ Failed: [GoogleGenerativeAI Error]: Error fetching from https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro:generateContent: [404 Not Found] models/gemini-1.5-pro is not found for API version v1beta, or is not supported for generateContent. Call ListModels to see the list of available models and their supported methods."
+    },
+    {
+      "name": "gemini-1.5-flash",
+      "status": "❌ Failed: [GoogleGenerativeAI Error]: Error fetching from https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent: [404 Not Found] models/gemini-1.5-flash is not found for API version v1beta, or is not supported for generateContent. Call ListModels to see the list of available models and their supported methods."
+    },
+    {
+      "name": "gemini-1.5-flash-vision",
+      "status": "❌ Failed: [GoogleGenerativeAI Error]: Error fetching from https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-vision:generateContent: [404 Not Found] models/gemini-1.5-flash-vision is not found for API version v1beta, or is not supported for generateContent. Call ListModels to see the list of available models and their supported methods."
+    }
+  ],
+  "yourApiKeyPrefix": "AIzaSyDAB4..."
+}

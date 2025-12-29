@@ -1,131 +1,195 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { doc, setDoc } from "firebase/firestore";
-import { db, auth } from "../firebase/firebase";
+import { auth, db } from "../firebase/firebase";
+import "./SelectRole.css"; // You'll need to create this CSS
 
-const SelectRole = () => {
-  const [role, setRole] = useState("job_seeker");
-  const [name, setName] = useState("");
-  const [country, setCountry] = useState("");
-  const [phone, setPhone] = useState("");
+const SelectRole = ({ setUser }) => {
+  const [selectedRole, setSelectedRole] = useState("");
   const [loading, setLoading] = useState(false);
-  const [user, setUser] = useState(null);
+  const [error, setError] = useState("");
+  const [socialUserData, setSocialUserData] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Get the currently logged-in user
-    const currentUser = auth.currentUser;
-    if (!currentUser) {
-      alert("User not signed in. Please sign in again.");
-      navigate("/signup");
-      return;
+    // Get social user data from sessionStorage
+    const tempSocialUser = sessionStorage.getItem('tempSocialUser');
+    if (tempSocialUser) {
+      try {
+        const parsedData = JSON.parse(tempSocialUser);
+        setSocialUserData(parsedData);
+        console.log("Social user data loaded:", parsedData);
+      } catch (error) {
+        console.error("Error parsing social user data:", error);
+        navigate("/login"); // Go back to login if error
+      }
+    } else {
+      // No social user data found, go back to login
+      navigate("/login");
     }
-    setUser(currentUser);
   }, [navigate]);
 
-  const handleRoleSelect = async () => {
-    if (!user) return;
+  const handleRoleSelect = (role) => {
+    setSelectedRole(role);
+  };
 
-    if (!name || !country || !phone) {
-      alert("Please fill in all fields.");
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    
+    if (!selectedRole) {
+      setError("Please select a role");
+      return;
+    }
+
+    if (!socialUserData) {
+      setError("No user data found. Please try logging in again.");
       return;
     }
 
     setLoading(true);
+    setError("");
 
     try {
-      // Save role, name, country, phone, and email to Firestore
-      await setDoc(
-        doc(db, "users", user.uid),
-        {
-          email: user.email,
-          role: role,
-          fullName: name,
-          country: country,
-          phone: phone,
-        },
-        { merge: true }
-      );
+      console.log("Creating user profile for social login with role:", selectedRole);
+      
+      // Create user data for Firestore
+      const userData = {
+        uid: socialUserData.uid,
+        email: socialUserData.email,
+        firstName: socialUserData.displayName?.split(' ')[0] || "",
+        lastName: socialUserData.displayName?.split(' ').slice(1).join(' ') || "",
+        role: selectedRole,
+        emailVerified: true, // Social providers verify email
+        profileCompleted: false, // Needs to complete profile
+        isFirstTimeUser: true,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        signInMethods: [socialUserData.provider],
+        photoURL: socialUserData.photoURL || ""
+      };
 
-      console.log("✅ User info saved:", { role, name, country, phone });
+      // Save to Firestore
+      await setDoc(doc(db, "users", socialUserData.uid), userData);
+      console.log("User data saved to Firestore with role:", selectedRole);
 
-      // Navigate to the correct dashboard
-      if (role === "job_seeker") navigate("/jobseeker");
-      else if (role === "employer") navigate("/employer");
-      else navigate("/admin");
-    } catch (error) {
-      console.error("❌ Error saving user info:", error);
-      alert("Error saving user info. Please try again.");
+      // Clean up sessionStorage
+      sessionStorage.removeItem('tempSocialUser');
+
+      // Set user in app state
+      const user = {
+        uid: socialUserData.uid,
+        email: socialUserData.email,
+        role: selectedRole,
+        name: socialUserData.displayName || "",
+        firstName: userData.firstName,
+        lastName: userData.lastName,
+        profileCompleted: false,
+        isFirstTimeUser: true,
+        emailVerified: true,
+        isSocialLogin: true,
+      };
+
+      setUser(user);
+      
+      // Redirect to complete profile
+      navigate("/complete-profile");
+
+    } catch (err) {
+      console.error("Error saving role:", err);
+      setError(`Failed to save role: ${err.message}`);
     } finally {
       setLoading(false);
     }
   };
 
-  if (!user) return null; // Wait until user is loaded
+  if (!socialUserData) {
+    return (
+      <div className="loading-container">
+        <div className="loading-spinner"></div>
+        <p>Loading...</p>
+      </div>
+    );
+  }
 
   return (
-    <div style={{ textAlign: "center", marginTop: "80px" }}>
-      <h2>Welcome, {user.email} 👋</h2>
-      <p>Please complete your profile and select your role to continue:</p>
+    <div className="select-role-page">
+      <div className="select-role-container">
+        <div className="select-role-header">
+          <h1>Choose Your Account Type</h1>
+          <p className="welcome-message">
+            Welcome, {socialUserData.displayName || socialUserData.email}! 
+            Please select how you'd like to use Joblytics.
+          </p>
+        </div>
 
-      <div style={{ margin: "10px 0" }}>
-        <input
-          type="text"
-          placeholder="Full Name"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          style={{ padding: "10px", fontSize: "16px", width: "250px" }}
-        />
+        <div className="role-options">
+          <div 
+            className={`role-card ${selectedRole === "jobseeker" ? "selected" : ""}`}
+            onClick={() => handleRoleSelect("jobseeker")}
+          >
+            <div className="role-icon">👤</div>
+            <h3>Job Seeker</h3>
+            <p className="role-description">
+              Looking for your next career opportunity? Browse jobs, apply 
+              with one click, and get matched with top companies.
+            </p>
+            <ul className="role-features">
+              <li>✓ Browse thousands of jobs</li>
+              <li>✓ One-click applications</li>
+              <li>✓ Get job recommendations</li>
+              <li>✓ Track your applications</li>
+            </ul>
+            <div className="role-tag">Recommended for individuals</div>
+          </div>
+
+          <div 
+            className={`role-card ${selectedRole === "employer" ? "selected" : ""}`}
+            onClick={() => handleRoleSelect("employer")}
+          >
+            <div className="role-icon">🏢</div>
+            <h3>Employer</h3>
+            <p className="role-description">
+              Hiring talent for your company? Post jobs, manage applicants, 
+              and find the perfect candidates.
+            </p>
+            <ul className="role-features">
+              <li>✓ Post unlimited job listings</li>
+              <li>✓ Manage applicant pipeline</li>
+              <li>✓ Access candidate database</li>
+              <li>✓ Advanced hiring tools</li>
+            </ul>
+            <div className="role-tag">For companies & recruiters</div>
+          </div>
+        </div>
+
+        {error && <div className="error-message">{error}</div>}
+
+        <div className="role-actions">
+          <button 
+            className="btn-back"
+            onClick={() => {
+              sessionStorage.removeItem('tempSocialUser');
+              navigate("/login");
+            }}
+            disabled={loading}
+          >
+            Back to Login
+          </button>
+          
+          <button 
+            className="btn-continue"
+            onClick={handleSubmit}
+            disabled={!selectedRole || loading}
+          >
+            {loading ? "Processing..." : "Continue to Complete Profile"}
+          </button>
+        </div>
+
+        <div className="role-note">
+          <p>💡 <strong>Note:</strong> You can always update your role later in account settings, 
+          but some features may require re-verification.</p>
+        </div>
       </div>
-
-      <div style={{ margin: "10px 0" }}>
-        <input
-          type="text"
-          placeholder="Country"
-          value={country}
-          onChange={(e) => setCountry(e.target.value)}
-          style={{ padding: "10px", fontSize: "16px", width: "250px" }}
-        />
-      </div>
-
-      <div style={{ margin: "10px 0" }}>
-        <input
-          type="text"
-          placeholder="Phone Number"
-          value={phone}
-          onChange={(e) => setPhone(e.target.value)}
-          style={{ padding: "10px", fontSize: "16px", width: "250px" }}
-        />
-      </div>
-
-      <div style={{ margin: "10px 0" }}>
-        <select
-          value={role}
-          onChange={(e) => setRole(e.target.value)}
-          style={{ padding: "10px", fontSize: "16px", width: "270px" }}
-        >
-          <option value="job_seeker">Job Seeker</option>
-          <option value="employer">Employer</option>
-          <option value="admin">Admin</option>
-        </select>
-      </div>
-
-      <button
-        onClick={handleRoleSelect}
-        disabled={loading}
-        style={{
-          marginTop: "20px",
-          padding: "10px 20px",
-          fontSize: "16px",
-          cursor: loading ? "not-allowed" : "pointer",
-          backgroundColor: loading ? "#ccc" : "#007bff",
-          color: "#fff",
-          border: "none",
-          borderRadius: "6px",
-        }}
-      >
-        {loading ? "Saving..." : "Continue"}
-      </button>
     </div>
   );
 };

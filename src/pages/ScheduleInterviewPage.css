@@ -408,3 +408,312 @@
     padding: 16px;
   }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* ScheduleInterviewPage.css */
+
+/* Layout */
+.interview-page {
+  min-height: 100vh;
+  background-color: #f5f5f7;
+}
+
+.interview-container {
+  display: flex;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 20px;
+  gap: 20px;
+}
+
+.interview-left-section {
+  flex: 3;
+}
+
+.interview-right-section {
+  flex: 1;
+}
+
+.interview-card {
+  background: white;
+  border-radius: 12px;
+  padding: 24px;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+/* Form Styles */
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-row {
+  display: flex;
+  gap: 20px;
+}
+
+.form-row .form-group {
+  flex: 1;
+}
+
+.form-label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 600;
+  color: #333;
+}
+
+.form-input, select.form-input {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 16px;
+}
+
+textarea.form-input {
+  resize: vertical;
+  min-height: 80px;
+}
+
+.schedule-button {
+  background-color: #2563eb;
+  color: white;
+  border: none;
+  padding: 14px 28px;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  width: 100%;
+  margin-top: 20px;
+}
+
+.schedule-button:hover:not(:disabled) {
+  background-color: #1d4ed8;
+}
+
+.schedule-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Meetings List */
+.meetings-section {
+  margin-bottom: 30px;
+}
+
+.meetings-section h3 {
+  margin-bottom: 16px;
+  color: #4b5563;
+}
+
+.meeting-item {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 12px;
+}
+
+.meeting-item.past {
+  opacity: 0.7;
+}
+
+.meeting-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.meeting-title {
+  font-weight: 600;
+  font-size: 16px;
+  color: #1e293b;
+}
+
+.meeting-status {
+  font-size: 12px;
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-weight: 600;
+}
+
+.meeting-status.scheduled {
+  background-color: #dbeafe;
+  color: #1e40af;
+}
+
+.meeting-details div {
+  margin-bottom: 6px;
+  font-size: 14px;
+}
+
+.meeting-details strong {
+  color: #4b5563;
+  margin-right: 8px;
+}
+
+/* Stats */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+}
+
+.stat-item {
+  text-align: center;
+  padding: 16px;
+  background: #f8fafc;
+  border-radius: 8px;
+}
+
+.stat-value {
+  font-size: 24px;
+  font-weight: 700;
+  color: #2563eb;
+}
+
+.stat-label {
+  font-size: 14px;
+  color: #6b7280;
+  margin-top: 4px;
+}
+
+/* Action Buttons */
+.action-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.action-btn {
+  background: #f1f5f9;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 12px;
+  text-align: center;
+  color: #475569;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.action-btn:hover {
+  background: #e2e8f0;
+  color: #334155;
+}
+
+/* Tips List */
+.tips-list {
+  list-style: none;
+  padding: 0;
+}
+
+.tip-item {
+  display: flex;
+  align-items: flex-start;
+  margin-bottom: 12px;
+  font-size: 14px;
+  color: #4b5563;
+}
+
+.tip-bullet {
+  color: #2563eb;
+  margin-right: 8px;
+  font-weight: bold;
+}
+
+/* Navbar */
+.interview-navbar {
+  background: white;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  padding: 0 20px;
+}
+
+.interview-navbar-content {
+  max-width: 1400px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 64px;
+}
+
+.interview-logo {
+  font-size: 24px;
+  font-weight: 700;
+  color: #2563eb;
+  margin: 0;
+}
+
+.interview-nav-links {
+  display: flex;
+  gap: 24px;
+}
+
+.interview-nav-link {
+  background: none;
+  border: none;
+  padding: 8px 12px;
+  font-size: 16px;
+  color: #6b7280;
+  cursor: pointer;
+  border-radius: 6px;
+}
+
+.interview-nav-link:hover {
+  color: #2563eb;
+  background: #f1f5f9;
+}
+
+.interview-nav-link-active {
+  color: #2563eb;
+  background: #dbeafe;
+  font-weight: 600;
+}
+
+/* User Menu */
+.interview-user-menu {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.interview-user-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: #2563eb;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+}
+
+.interview-user-name {
+  font-weight: 500;
+}
+
+.no-meetings {
+  text-align: center;
+  color: #9ca3af;
+  padding: 20px;
+}
+
+
+
+

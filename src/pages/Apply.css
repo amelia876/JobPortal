@@ -1,0 +1,579 @@
+/* Apply.css - Updated to match jobseeker dashboard design */
+
+/* ====== BASE STYLES ====== */
+.apply-container {
+  min-height: 100vh;
+  background-color: #f8f9fa;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* ====== TOP NAVBAR ====== */
+.jobseeker-top-navbar {
+  background: linear-gradient(135deg, #059669 0%, #10b981 100%);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  padding: 0 24px;
+  height: 70px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+}
+
+.jobseeker-nav-brand {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.jobseeker-brand-logo {
+  font-size: 24px;
+  font-weight: 700;
+  color: white;
+  text-decoration: none;
+}
+
+.jobseeker-user-welcome {
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.9);
+  font-weight: 500;
+}
+
+.jobseeker-nav-center {
+  display: flex;
+  gap: 30px;
+  margin-left: 250px;
+}
+
+.jobseeker-nav-links {
+  display: flex;
+  list-style: none;
+  gap: 25px;
+  margin: 0;
+  padding: 0;
+}
+
+.jobseeker-nav-links li a {
+  text-decoration: none;
+  color: rgba(255, 255, 255, 0.9);
+  font-weight: 500;
+  font-size: 14px;
+  padding: 8px 0;
+  position: relative;
+  transition: color 0.3s ease;
+}
+
+.jobseeker-nav-links li a:hover {
+  color: white;
+}
+
+.jobseeker-nav-links li a::after {
+  content: '';
+  position: absolute;
+  bottom: -5px;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background: white;
+  transition: width 0.3s ease;
+}
+
+.jobseeker-nav-links li a:hover::after {
+  width: 100%;
+}
+
+.jobseeker-nav-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+/* ====== SIDEBAR ====== */
+.jobseeker-dashboard-layout {
+  display: flex;
+  margin-top: 70px;
+}
+
+.jobseeker-sidebar {
+  width: 250px;
+  background: white;
+  height: calc(100vh - 70px);
+  position: fixed;
+  left: 0;
+  top: 70px;
+  border-right: 1px solid #e2e8f0;
+  padding: 24px 0;
+  overflow-y: auto;
+  z-index: 999;
+  box-shadow: 2px 0 10px rgba(0, 0, 0, 0.05);
+}
+
+.jobseeker-logo {
+  font-size: 20px;
+  font-weight: 700;
+  color: #059669;
+  padding: 0 24px 24px;
+  margin-bottom: 16px;
+  border-bottom: 1px solid #e2e8f0;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.jobseeker-menu {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.jobseeker-menu li {
+  padding: 12px 24px;
+  margin: 4px 0;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: #64748b;
+  font-weight: 500;
+  font-size: 14px;
+  border-left: 3px solid transparent;
+}
+
+.jobseeker-menu li:hover {
+  background: #f8fafc;
+  color: #10b981;
+}
+
+.jobseeker-menu li.active {
+  background: #f0f9ff;
+  color: #10b981;
+  border-left-color: #10b981;
+}
+
+.jobseeker-menu-icon {
+  font-size: 18px;
+  width: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.jobseeker-menu-text {
+  flex: 1;
+}
+
+.jobseeker-menu-badge {
+  background: #10b981;
+  color: white;
+  font-size: 12px;
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-weight: 600;
+}
+
+.jobseeker-badge-red {
+  background: #ef4444;
+}
+
+/* ====== MAIN CONTENT ====== */
+.jobseeker-main-content {
+  flex: 1;
+  margin-left: 250px;
+  padding: 30px;
+  min-height: calc(100vh - 70px);
+  background: #f8f9fa;
+}
+
+/* Remove old navbar styles and breadcrumb */
+.top-navbar,
+.breadcrumb {
+  display: none;
+}
+
+/* Update apply-content-wrapper for new layout */
+.apply-content-wrapper {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0;
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 2rem;
+}
+
+/* Notification Styles from provided CSS */
+.notification-container {
+  position: relative;
+}
+
+.notification-bell {
+  background: rgba(255, 255, 255, 0.1);
+  border: none;
+  cursor: pointer;
+  position: relative;
+  padding: 8px;
+  border-radius: 8px;
+  transition: background 0.3s ease;
+}
+
+.notification-bell:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.notification-icon {
+  font-size: 20px;
+  color: white;
+}
+
+.notification-badge {
+  position: absolute;
+  top: 0;
+  right: 0;
+  background: #ef4444;
+  color: white;
+  font-size: 11px;
+  font-weight: 600;
+  min-width: 18px;
+  height: 18px;
+  border-radius: 9px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid #059669;
+}
+
+.notification-dropdown {
+  position: absolute;
+  top: calc(100% + 10px);
+  right: 0;
+  width: 380px;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+  border: 1px solid #e2e8f0;
+  display: none;
+  z-index: 1001;
+}
+
+.notification-dropdown.open {
+  display: block;
+  animation: jobseeker-slideDown 0.3s ease;
+}
+
+@keyframes jobseeker-slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.notification-header {
+  padding: 16px 20px;
+  border-bottom: 1px solid #e2e8f0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.notification-header h3 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: #1e293b;
+}
+
+.mark-all-read {
+  background: none;
+  border: none;
+  color: #10b981;
+  font-size: 14px;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.mark-all-read:hover {
+  text-decoration: underline;
+}
+
+.notification-list {
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.notification-item {
+  padding: 16px 20px;
+  border-bottom: 1px solid #f1f5f9;
+  cursor: pointer;
+  transition: background 0.2s;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.notification-item:hover {
+  background: #f8fafc;
+}
+
+.notification-item.unread {
+  background: #f0f9ff;
+  position: relative;
+}
+
+.notification-item.unread::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  background: #10b981;
+}
+
+.notification-content {
+  flex: 1;
+}
+
+.notification-title {
+  font-weight: 500;
+  color: #1e293b;
+  font-size: 14px;
+  margin-bottom: 4px;
+}
+
+.notification-message {
+  color: #64748b;
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+.notification-time {
+  color: #94a3b8;
+  font-size: 12px;
+  margin-top: 4px;
+}
+
+.unread-dot {
+  width: 8px;
+  height: 8px;
+  background: #10b981;
+  border-radius: 50%;
+  margin-left: 10px;
+  flex-shrink: 0;
+  margin-top: 6px;
+}
+
+/* Icon Buttons */
+.jobseeker-icon-button-container {
+  position: relative;
+}
+
+.jobseeker-icon-button {
+  background: rgba(255, 255, 255, 0.1);
+  border: none;
+  border-radius: 10px;
+  padding: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+}
+
+.jobseeker-icon-button:hover {
+  background: rgba(255, 255, 255, 0.2);
+  transform: translateY(-1px);
+}
+
+.jobseeker-icon-button-icon {
+  font-size: 20px;
+  color: white;
+}
+
+.jobseeker-message-badge {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  background: #ef4444;
+  color: white;
+  font-size: 11px;
+  font-weight: 600;
+  min-width: 18px;
+  height: 18px;
+  border-radius: 9px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid #059669;
+}
+
+/* Keep existing form styles but adjust for new layout */
+.application-main-content {
+  background: #fff;
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  border: 1px solid #e2e8f0;
+}
+
+.application-sidebar {
+  background: #fff;
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  border: 1px solid #e2e8f0;
+  height: fit-content;
+  position: sticky;
+  top: 100px;
+}
+
+/* Nav buttons styling */
+.nav-btn {
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-weight: 500;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.back-btn {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: white;
+}
+
+.back-btn:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.logout-btn {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: white;
+}
+
+.logout-btn:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+/* Responsive Design */
+@media (max-width: 1200px) {
+  .jobseeker-nav-center {
+    margin-left: 200px;
+  }
+  
+  .jobseeker-sidebar {
+    width: 200px;
+  }
+  
+  .jobseeker-main-content {
+    margin-left: 200px;
+  }
+  
+  .apply-content-wrapper {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+}
+
+@media (max-width: 992px) {
+  .jobseeker-nav-center {
+    display: none;
+  }
+  
+  .jobseeker-sidebar {
+    display: none;
+  }
+  
+  .jobseeker-main-content {
+    margin-left: 0;
+    padding: 20px;
+  }
+}
+
+@media (max-width: 768px) {
+  .jobseeker-top-navbar {
+    padding: 0 16px;
+  }
+  
+  .jobseeker-main-content {
+    padding: 16px;
+  }
+  
+  .application-main-content,
+  .application-sidebar {
+    padding: 1.5rem;
+  }
+  
+  .notification-dropdown {
+    width: 300px;
+    right: -50px;
+  }
+}
+
+/* Success page adjustments */
+.success-container {
+  background: white;
+  border-radius: 12px;
+  padding: 3rem;
+  text-align: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  border: 1px solid #e2e8f0;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.success-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  margin-top: 2rem;
+  flex-wrap: wrap;
+}
+
+.btn-primary, .btn-secondary, .btn-tertiary {
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-weight: 500;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: none;
+}
+
+.btn-primary {
+  background: #10b981;
+  color: white;
+}
+
+.btn-primary:hover {
+  background: #059669;
+}
+
+.btn-secondary {
+  background: #f1f5f9;
+  color: #475569;
+}
+
+.btn-secondary:hover {
+  background: #e2e8f0;
+}
+
+.btn-tertiary {
+  background: #3b82f6;
+  color: white;
+}
+
+.btn-tertiary:hover {
+  background: #2563eb;
+}

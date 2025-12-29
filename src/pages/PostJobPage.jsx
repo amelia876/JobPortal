@@ -1,9 +1,24 @@
 import React, { useState, useEffect, memo } from "react";
 import { auth, db } from "../firebase/firebase";
 import { collection, doc, setDoc, Timestamp } from "firebase/firestore";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
+import {
+  FiHome,
+  FiBriefcase,
+  FiUser,
+  FiBell,
+  FiMessageSquare,
+  FiCheckCircle,
+  FiFileText,
+  FiUsers,
+  FiClipboard,
+  FiCalendar,
+  FiArrowLeft,
+  FiSave,
+  FiChevronRight,
+  FiChevronLeft
+} from "react-icons/fi";
 import "./PostJobPage.css";
-
 
 // Step components extracted and memoized to avoid unnecessary remounts
 const Step1BasicInfo = memo(function Step1BasicInfo({ jobData, onChange }) {
@@ -16,6 +31,7 @@ const Step1BasicInfo = memo(function Step1BasicInfo({ jobData, onChange }) {
           value={jobData.title}
           onChange={(e) => onChange("title", e.target.value)}
           placeholder="Enter job title"
+          className="postjob-input"
         />
       </div>
 
@@ -24,6 +40,7 @@ const Step1BasicInfo = memo(function Step1BasicInfo({ jobData, onChange }) {
         <select
           value={jobData.jobStatus}
           onChange={(e) => onChange("jobStatus", e.target.value)}
+          className="postjob-select"
         >
           <option value="">Select job status</option>
           <option value="Full-time">Full-time</option>
@@ -40,6 +57,7 @@ const Step1BasicInfo = memo(function Step1BasicInfo({ jobData, onChange }) {
           value={jobData.department}
           onChange={(e) => onChange("department", e.target.value)}
           placeholder="Enter department"
+          className="postjob-input"
         />
       </div>
 
@@ -48,6 +66,7 @@ const Step1BasicInfo = memo(function Step1BasicInfo({ jobData, onChange }) {
         <select
           value={jobData.minExperience}
           onChange={(e) => onChange("minExperience", e.target.value)}
+          className="postjob-select"
         >
           <option value="">Select experience level</option>
           <option value="Entry Level">Entry Level (0-2 years)</option>
@@ -63,6 +82,7 @@ const Step1BasicInfo = memo(function Step1BasicInfo({ jobData, onChange }) {
           value={jobData.location}
           onChange={(e) => onChange("location", e.target.value)}
           placeholder="Enter location"
+          className="postjob-input"
         />
       </div>
 
@@ -73,6 +93,7 @@ const Step1BasicInfo = memo(function Step1BasicInfo({ jobData, onChange }) {
           value={jobData.compensation}
           onChange={(e) => onChange("compensation", e.target.value)}
           placeholder="Enter salary range"
+          className="postjob-input"
         />
       </div>
     </div>
@@ -89,6 +110,7 @@ const Step2JobDescription = memo(function Step2JobDescription({ jobData, onChang
           onChange={(e) => onChange("description", e.target.value)}
           placeholder="Describe the role, responsibilities, and what you're looking for in a candidate..."
           rows={6}
+          className="postjob-textarea"
         />
       </div>
       <div className="postjob-form-group">
@@ -98,6 +120,7 @@ const Step2JobDescription = memo(function Step2JobDescription({ jobData, onChang
           onChange={(e) => onChange("qualifications", e.target.value)}
           placeholder="List required qualifications, skills, and education..."
           rows={4}
+          className="postjob-textarea"
         />
       </div>
       <div className="postjob-form-group">
@@ -107,6 +130,7 @@ const Step2JobDescription = memo(function Step2JobDescription({ jobData, onChang
           onChange={(e) => onChange("experienceRequired", e.target.value)}
           placeholder="Detail specific experience requirements..."
           rows={3}
+          className="postjob-textarea"
         />
       </div>
     </div>
@@ -123,6 +147,7 @@ const Step3Questions = memo(function Step3Questions({ jobData, onChange }) {
           value={jobData.questions.join("\n")}
           onChange={(e) => onChange("questions", e.target.value.split("\n"))}
           rows={8}
+          className="postjob-textarea"
         />
         <div className="postjob-hint">
           Candidates will answer these questions when applying for this position.
@@ -142,6 +167,7 @@ const Step4HiringProcess = memo(function Step4HiringProcess({ jobData, onChange 
           value={jobData.hiringProcess}
           onChange={(e) => onChange("hiringProcess", e.target.value)}
           rows={8}
+          className="postjob-textarea"
         />
         <div className="postjob-hint">
           This helps candidates understand what to expect during the hiring process.
@@ -231,6 +257,8 @@ const Step5Confirmation = memo(function Step5Confirmation({ jobData }) {
 const PostJobPage = () => {
   const navigate = useNavigate();
   const [currentStep, setCurrentStep] = useState(1);
+  const [notificationsOpen, setNotificationsOpen] = useState(false);
+  const [messagesOpen, setMessagesOpen] = useState(false);
   const [jobData, setJobData] = useState({
     id: null,
     title: "",
@@ -315,167 +343,243 @@ const PostJobPage = () => {
     }
   };
 
+  const handleLogout = async () => {
+    try {
+      await auth.signOut();
+      navigate('/login');
+    } catch (error) {
+      console.error('Error signing out:', error);
+    }
+  };
+
   return (
-    <div className="postjob-page">
-      {/* NAVBAR */}
-      <nav className="navbar">
-        <div className="logo">JobLytics</div>
-
-        <ul className="nav-links">
-          <li><a href="/EmployerDashboard">Home</a></li>
-          <li><a href="/PostJobPage">Jobs</a></li>
-          <li><a href="/Profile">Profile</a></li>
-          <li><a href="/Applicants">Applicants</a></li>
-        </ul>
-
-        <div className="nav-actions">
+    <div className="employer-dashboard-container">
+      {/* TOP NAVBAR */}
+      <nav className="employer-top-navbar">
+        <div className="employer-nav-brand">
+          <span className="employer-brand-logo">JobLytics</span>
+          <span className="employer-user-welcome">
+            Post New Job
+          </span>
+        </div>
+        
+        <div className="employer-nav-center">
+          <ul className="employer-nav-links">
+            <li><Link to="/EmployerDashboard">Dashboard</Link></li>
+            <li><Link to="/PostJobPage" className="active">Jobs</Link></li>
+            <li><Link to="/Profile">Profile</Link></li>
+            <li><Link to="/Applicants">Applicants</Link></li>
+          </ul>
+        </div>
+        
+        <div className="employer-nav-actions">
+          <div className="employer-notification-container">
+            <button 
+              className="employer-notification-bell"
+              onClick={() => setNotificationsOpen(!notificationsOpen)}
+            >
+              <FiBell className="employer-notification-icon" />
+              <span className="employer-notification-badge">3</span>
+            </button>
+            
+            {notificationsOpen && (
+              <div className="employer-notification-dropdown open">
+                <div className="employer-notification-header">
+                  <h3>Notifications</h3>
+                  <button className="employer-mark-all-read">Mark all as read</button>
+                </div>
+                <div className="employer-notification-list">
+                  <div className="employer-notification-item unread">
+                    <div className="employer-notification-content">
+                      <div className="employer-notification-title">New Application</div>
+                      <div className="employer-notification-message">
+                        John Doe applied for Senior Developer position
+                      </div>
+                      <div className="employer-notification-time">2 hours ago</div>
+                    </div>
+                    <div className="employer-unread-dot"></div>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+          
+          <div className="employer-icon-button-container">
+            <button 
+              className="employer-icon-button"
+              onClick={() => setMessagesOpen(true)}
+            >
+              <FiMessageSquare className="employer-icon-button-icon" />
+            </button>
+          </div>
+          
+          <div className="employer-user-info">
+            {auth.currentUser?.displayName || 'Employer'}
+          </div>
+          
           <button 
-            onClick={() => window.history.back()} 
-            className="login-btn"
-            style={{ background: 'none', border: 'none', cursor: 'pointer', font: 'inherit' }}
+            onClick={handleLogout}
+            className="employer-icon-button"
+            style={{ background: 'rgba(255, 255, 255, 0.1)', color: 'white' }}
           >
-            Back
-          </button>
-          <button 
-            onClick={async () => {
-              try {
-                await auth.signOut();
-                navigate('/login');
-              } catch (error) {
-                console.error('Error signing out:', error);
-              }
-            }}
-            className="signup-btn"
-            style={{ background: 'none', border: 'none', cursor: 'pointer', font: 'inherit' }}
-          >
-            Log Out
+            Logout
           </button>
         </div>
       </nav>
 
-      {/* Main Content Container */}
-      <div className="postjob-content-wrapper">
-        {/* Sidebar */}
-        <aside className="postjob-sidebar">
-          <div className="postjob-sidebar-header">
-            <h2 className="postjob-logo">JobLytics</h2>
-          </div>
-          <div className="postjob-sidebar-steps">
-            <div className={`postjob-step-indicator ${currentStep === 1 ? 'active' : ''}`}>
-              <div className="postjob-step-number">1</div>
-              <div className="postjob-step-info">
-                <div className="postjob-step-title">Basic Information</div>
-                <div className="postjob-step-desc">Job title & details</div>
-              </div>
-            </div>
-            <div className={`postjob-step-indicator ${currentStep === 2 ? 'active' : ''}`}>
-              <div className="postjob-step-number">2</div>
-              <div className="postjob-step-info">
-                <div className="postjob-step-title">Job Description</div>
-                <div className="postjob-step-desc">Role & requirements</div>
-              </div>
-            </div>
-            <div className={`postjob-step-indicator ${currentStep === 3 ? 'active' : ''}`}>
-              <div className="postjob-step-number">3</div>
-              <div className="postjob-step-info">
-                <div className="postjob-step-title">Questions</div>
-                <div className="postjob-step-desc">Candidate screening</div>
-              </div>
-            </div>
-            <div className={`postjob-step-indicator ${currentStep === 4 ? 'active' : ''}`}>
-              <div className="postjob-step-number">4</div>
-              <div className="postjob-step-info">
-                <div className="postjob-step-title">Hiring Process</div>
-                <div className="postjob-step-desc">Interview stages</div>
-              </div>
-            </div>
-            <div className={`postjob-step-indicator ${currentStep === 5 ? 'active' : ''}`}>
-              <div className="postjob-step-number">5</div>
-              <div className="postjob-step-info">
-                <div className="postjob-step-title">Confirmation</div>
-                <div className="postjob-step-desc">Review & submit</div>
-              </div>
-            </div>
-          </div>
+      {/* MAIN LAYOUT */}
+      <div className="employer-dashboard-layout">
+        {/* SIDEBAR */}
+        <aside className="employer-sidebar">
+          <div className="employer-logo">JobLytics</div>
+          <ul className="employer-menu">
+            <li>
+              <Link to="/EmployerDashboard" className="employer-menu-link">
+                <span className="employer-menu-icon"><FiHome /></span>
+                <span className="employer-menu-text">Dashboard</span>
+              </Link>
+            </li>
+            <li className="active">
+              <Link to="/PostJobPage" className="employer-menu-link">
+                <span className="employer-menu-icon"><FiBriefcase /></span>
+                <span className="employer-menu-text">Jobs</span>
+                <span className="employer-menu-badge">5</span>
+              </Link>
+            </li>
+            <li>
+              <Link to="/Applicants" className="employer-menu-link">
+                <span className="employer-menu-icon"><FiUsers /></span>
+                <span className="employer-menu-text">Applicants</span>
+                <span className="employer-menu-badge employer-badge-red">12</span>
+              </Link>
+            </li>
+            <li>
+              <Link to="/Profile" className="employer-menu-link">
+                <span className="employer-menu-icon"><FiUser /></span>
+                <span className="employer-menu-text">Profile</span>
+              </Link>
+            </li>
+            <li>
+              <Link to="/messages" className="employer-menu-link">
+                <span className="employer-menu-icon"><FiMessageSquare /></span>
+                <span className="employer-menu-text">Messages</span>
+                <span className="employer-menu-badge">3</span>
+              </Link>
+            </li>
+          </ul>
         </aside>
 
-        {/* Main Content */}
-        <div className="postjob-main-content">
-          <header className="postjob-topbar">
-            <div className="postjob-breadcrumb">
-              Jobs / Post New Job
-            </div>
-            <div className="postjob-user-menu">
-              <div className="postjob-user-avatar">
-                <span>JD</span>
+        {/* MAIN CONTENT */}
+        <main className="employer-main-content">
+          <header className="employer-header">
+            <h1>Post New Job</h1>
+            <div className="employer-search-bar">
+              <input 
+                type="text" 
+                placeholder="Search jobs, applicants..." 
+                className="postjob-search"
+              />
+              <div className="employer-user-info">
+                Welcome, {auth.currentUser?.displayName || 'Employer'}
               </div>
-              <span className="postjob-user-name">John Doe</span>
             </div>
           </header>
 
-          {/* Progress Bar */}
-          <div className="postjob-progress-container">
-            <div className="postjob-progress-bar">
+          {/* Progress Section */}
+          <div className="postjob-progress-section">
+            <div className="postjob-step-indicators">
+              {[1, 2, 3, 4, 5].map((step) => (
+                <div key={step} className="postjob-step-indicator-wrapper">
+                  <div className={`postjob-step-circle ${currentStep >= step ? 'active' : ''}`}>
+                    {currentStep > step ? <FiCheckCircle /> : step}
+                  </div>
+                  <div className="postjob-step-label">
+                    {step === 1 && 'Basic Info'}
+                    {step === 2 && 'Description'}
+                    {step === 3 && 'Questions'}
+                    {step === 4 && 'Process'}
+                    {step === 5 && 'Review'}
+                  </div>
+                  {step < 5 && (
+                    <div className={`postjob-step-connector ${currentStep > step ? 'active' : ''}`}></div>
+                  )}
+                </div>
+              ))}
+            </div>
+            
+            <div className="postjob-progress-bar-container">
               <div 
                 className="postjob-progress-fill" 
                 style={{ width: `${(currentStep / 5) * 100}%` }}
               ></div>
             </div>
             <div className="postjob-progress-text">
-              Step {currentStep} of 5
+              Step {currentStep} of 5 · {Math.round((currentStep / 5) * 100)}% Complete
             </div>
           </div>
 
           {/* Form Card */}
           <div className="postjob-form-card">
             <div className="postjob-form-header">
-              <h2>
-                {currentStep === 1 && "Basic Information"}
-                {currentStep === 2 && "Job Description"}
-                {currentStep === 3 && "Candidate Questions"}
-                {currentStep === 4 && "Hiring Process"}
-                {currentStep === 5 && "Review Job Posting"}
-              </h2>
-              <p>
-                {currentStep === 1 && "Enter the basic details about the position"}
-                {currentStep === 2 && "Describe the role and what you're looking for"}
-                {currentStep === 3 && "Add questions for candidates to answer"}
-                {currentStep === 4 && "Outline your hiring process"}
-                {currentStep === 5 && "Verify all information before posting"}
-              </p>
+              <div className="postjob-form-title">
+                <h2>
+                  {currentStep === 1 && "Basic Information"}
+                  {currentStep === 2 && "Job Description"}
+                  {currentStep === 3 && "Candidate Questions"}
+                  {currentStep === 4 && "Hiring Process"}
+                  {currentStep === 5 && "Review Job Posting"}
+                </h2>
+                <p className="postjob-form-subtitle">
+                  {currentStep === 1 && "Enter the basic details about the position"}
+                  {currentStep === 2 && "Describe the role and what you're looking for"}
+                  {currentStep === 3 && "Add questions for candidates to answer"}
+                  {currentStep === 4 && "Outline your hiring process"}
+                  {currentStep === 5 && "Verify all information before posting"}
+                </p>
+              </div>
+              <div className="postjob-form-icon">
+                {currentStep === 1 && <FiFileText />}
+                {currentStep === 2 && <FiClipboard />}
+                {currentStep === 3 && <FiUsers />}
+                {currentStep === 4 && <FiCalendar />}
+                {currentStep === 5 && <FiCheckCircle />}
+              </div>
             </div>
 
             <div className="postjob-form-content">
               {renderStep()}
             </div>
-          </div>
 
-          {/* Navigation Buttons */}
-          <div className="postjob-form-navigation">
-            {currentStep > 1 && (
-              <button onClick={prevStep} className="postjob-secondary-btn">
-                Back
-              </button>
-            )}
-            {currentStep < 5 && (
-              <button onClick={nextStep} className="postjob-primary-btn">
-                Continue
-              </button>
-            )}
-            {currentStep === 5 && (
-              <button
-                onClick={async () => {
-                  await saveJobStep();
-                  alert("Job posted successfully!");
-                  navigate("/employer");
-                }}
-                className="postjob-primary-btn"
-              >
-                Finish & Post Job
-              </button>
-            )}
+            {/* Navigation Buttons */}
+            <div className="postjob-form-navigation">
+              <div className="postjob-nav-left">
+                {currentStep > 1 && (
+                  <button onClick={prevStep} className="postjob-secondary-btn">
+                    <FiChevronLeft /> Back
+                  </button>
+                )}
+              </div>
+              <div className="postjob-nav-right">
+                {currentStep < 5 ? (
+                  <button onClick={nextStep} className="postjob-primary-btn">
+                    Continue <FiChevronRight />
+                  </button>
+                ) : (
+                  <button
+                    onClick={async () => {
+                      await saveJobStep();
+                      alert("Job posted successfully!");
+                      navigate("/employer");
+                    }}
+                    className="postjob-primary-btn postjob-finish-btn"
+                  >
+                    <FiSave /> Finish & Post Job
+                  </button>
+                )}
+              </div>
+            </div>
           </div>
-        </div>
+        </main>
       </div>
     </div>
   );
