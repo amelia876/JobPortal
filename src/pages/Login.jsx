@@ -6,7 +6,7 @@ import {
 } from "firebase/auth";
 import { doc, getDoc } from "firebase/firestore";
 import { auth, db, signInWithGoogle, signInWithGithub } from "../firebase/firebase";
-import "./login.css";
+import "./Login.css";
 
 const Login = ({ setUser }) => {
   const [formData, setFormData] = useState({
